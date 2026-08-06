@@ -6,13 +6,18 @@ import { defineConfig, presetIcons, presetUno, transformerDirectives } from 'uno
 const iconPaths = globSync('./icons/*.svg');
 
 const collectionName = 'bolt';
+const devxCollectionName = 'devx';
 
 const customIconCollection = iconPaths.reduce(
   (acc, iconPath) => {
     const [iconName] = basename(iconPath).split('.');
 
+    // Register in both bolt and devx collections for compatibility
     acc[collectionName] ??= {};
     acc[collectionName][iconName] = async () => fs.readFile(iconPath, 'utf8');
+
+    acc[devxCollectionName] ??= {};
+    acc[devxCollectionName][iconName] = async () => fs.readFile(iconPath, 'utf8');
 
     return acc;
   },

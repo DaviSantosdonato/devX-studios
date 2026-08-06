@@ -114,13 +114,13 @@ export function Menu() {
             href="/"
             className="flex gap-2 items-center bg-devx-elements-sidebar-buttonBackgroundDefault text-devx-elements-sidebar-buttonText hover:bg-devx-elements-sidebar-buttonBackgroundHover rounded-md p-2 transition-theme"
           >
-            <span className="inline-block i-bolt:chat scale-110" />
-            Start new chat
+            <span className="inline-block i-devx:chat scale-110" />
+            Iniciar nova conversa
           </a>
         </div>
-        <div className="text-devx-elements-textPrimary font-medium pl-6 pr-5 my-2">Your Chats</div>
+        <div className="text-devx-elements-textPrimary font-medium pl-6 pr-5 my-2">Suas Conversas</div>
         <div className="flex-1 overflow-scroll pl-4 pr-5 pb-5">
-          {list.length === 0 && <div className="pl-2 text-devx-elements-textTertiary">No previous conversations</div>}
+          {list.length === 0 && <div className="pl-2 text-devx-elements-textTertiary">Nenhuma conversa anterior</div>}
           <DialogRoot open={dialogContent !== null}>
             {binDates(list).map(({ category, items }) => (
               <div key={category} className="mt-4 first:mt-0 space-y-1">

@@ -74,10 +74,10 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
             {!chatStarted && (
               <div id="intro" className="mt-[26vh] max-w-chat mx-auto">
                 <h1 className="text-5xl text-center font-bold text-devx-elements-textPrimary mb-2">
-                  Where ideas begin
+                  Onde as ideias começam
                 </h1>
                 <p className="mb-4 text-center text-devx-elements-textSecondary">
-                  Bring ideas to life in seconds or get help on existing projects.
+                  Dê vida às suas ideias em segundos ou obtenha ajuda em projetos existentes.
                 </p>
               </div>
             )}
@@ -130,7 +130,7 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                       minHeight: TEXTAREA_MIN_HEIGHT,
                       maxHeight: TEXTAREA_MAX_HEIGHT,
                     }}
-                    placeholder="How can Bolt help you today?"
+                    placeholder="Como a DevX Studio pode ajudar você hoje?"
                     translate="no"
                   />
                   <ClientOnly>
