@@ -1,54 +1,145 @@
-[![Bolt.new: AI-Powered Full-Stack Web Development in the Browser](./public/social_preview_index.jpg)](https://bolt.new)
+# DevX Studio — Desenvolvimento Full-Stack com IA no Navegador
 
-# Bolt.new: AI-Powered Full-Stack Web Development in the Browser
+DevX Studio é um agente de desenvolvimento full-stack alimentado por IA que permite criar, editar e executar aplicações web completas diretamente no navegador — sem configuração local. Produto da **X Technologies**.
 
-Bolt.new is an AI-powered web development agent that allows you to prompt, run, edit, and deploy full-stack applications directly from your browser—no local setup required. If you're here to build your own AI-powered web dev agent using the Bolt open source codebase, [click here to get started!](./CONTRIBUTING.md)
+## ✨ Principais Recursos
 
-## What Makes Bolt.new Different
+- **Ambiente Full-Stack no Navegador**: Integra modelos de IA de ponta com um ambiente de desenvolvimento in-browser via **WebContainer API** (StackBlitz). Permite:
+  - Instalar e executar ferramentas npm (Vite, Next.js, Astro, etc.)
+  - Rodar servidores Node.js
+  - Interagir com APIs de terceiros
+  - Deploy para produção a partir do chat
+  - Compartilhar trabalho via URL
 
-Claude, v0, etc are incredible- but you can't install packages, run backends or edit code. That’s where Bolt.new stands out:
+- **IA com Controle Total do Ambiente**: Diferente de ambientes tradicionais onde a IA apenas auxilia na geração de código, o DevX Studio dá aos modelos de IA **controle completo** sobre filesystem, servidor Node, gerenciador de pacotes, terminal e console do navegador. Isso permite que a IA gerencie todo o ciclo de vida da aplicação — da criação ao deploy.
 
-- **Full-Stack in the Browser**: Bolt.new integrates cutting-edge AI models with an in-browser development environment powered by **StackBlitz’s WebContainers**. This allows you to:
-  - Install and run npm tools and libraries (like Vite, Next.js, and more)
-  - Run Node.js servers
-  - Interact with third-party APIs
-  - Deploy to production from chat
-  - Share your work via a URL
+- **Editor Integrado**: CodeMirror 6 com suporte a múltiplas linguagens, terminal xterm.js, preview em tempo real e gerenciamento de arquivos visual.
 
-- **AI with Environment Control**: Unlike traditional dev environments where the AI can only assist in code generation, Bolt.new gives AI models **complete control** over the entire  environment including the filesystem, node server, package manager, terminal, and browser console. This empowers AI agents to handle the entire app lifecycle—from creation to deployment.
+## 🛠️ Tecnologias Utilizadas
 
-Whether you’re an experienced developer, a PM or designer, Bolt.new allows you to build production-grade full-stack applications with ease.
+- **Frontend**: React 18, Remix v2, UnoCSS, CodeMirror 6, xterm.js, Framer Motion
+- **Estado**: Nanostores
+- **IA**: Vercel AI SDK v3 (Anthropic Claude 3.5 Sonnet por padrão)
+- **Runtime**: WebContainer API (@webcontainer/api) — StackBlitz
+- **Deploy**: Cloudflare Pages / Workers
+- **Package Manager**: pnpm 9.4.0
 
-For developers interested in building their own AI-powered development tools with WebContainers, check out the open-source Bolt codebase in this repo!
+## 🚀 Instalação Local
 
-## Tips and Tricks
+### Pré-requisitos
+- Node.js >= 18.18.0
+- pnpm 9.4.0
 
-Here are some tips to get the most out of Bolt.new:
+### Passos
+```bash
+# Clone o repositório
+git clone <repo-url>
+cd devx-studio
 
-- **Be specific about your stack**: If you want to use specific frameworks or libraries (like Astro, Tailwind, ShadCN, or any other popular JavaScript framework), mention them in your initial prompt to ensure Bolt scaffolds the project accordingly.
+# Instale dependências
+pnpm install
 
-- **Use the enhance prompt icon**: Before sending your prompt, try clicking the 'enhance' icon to have the AI model help you refine your prompt, then edit the results before submitting.
+# Configure variáveis de ambiente
+cp .env.example .env.local
+# Edite .env.local e adicione sua ANTHROPIC_API_KEY
+```
 
-- **Scaffold the basics first, then add features**: Make sure the basic structure of your application is in place before diving into more advanced functionality. This helps Bolt understand the foundation of your project and ensure everything is wired up right before building out more advanced functionality.
+### Variáveis de Ambiente
+| Variável | Obrigatória | Descrição |
+|----------|-------------|-----------|
+| `ANTHROPIC_API_KEY` | Sim | Chave da API Anthropic (Claude) |
+| `VITE_LOG_LEVEL` | Não | Nível de log (debug, info, warn, error) |
 
-- **Batch simple instructions**: Save time by combining simple instructions into one message. For example, you can ask Bolt to change the color scheme, add mobile responsiveness, and restart the dev server, all in one go saving you time and reducing API credit consumption significantly.
+## 💻 Desenvolvimento
 
-## FAQs
+```bash
+# Inicia servidor de desenvolvimento
+pnpm run dev
 
-**Where do I sign up for a paid plan?**  
-Bolt.new is free to get started. If you need more AI tokens or want private projects, you can purchase a paid subscription in your [Bolt.new](https://bolt.new) settings, in the lower-left hand corner of the application. 
+# Executa typecheck
+pnpm run typecheck
 
-**What happens if I hit the free usage limit?**  
-Once your free daily token limit is reached, AI interactions are paused until the next day or until you upgrade your plan.
+# Executa testes
+pnpm run test
 
-**Is Bolt in beta?**  
-Yes, Bolt.new is in beta, and we are actively improving it based on feedback.
+# Lint
+pnpm run lint
+```
 
-**How can I report Bolt.new issues?**  
-Check out the [Issues section](https://github.com/stackblitz/bolt.new/issues) to report an issue or request a new feature. Please use the search feature to check if someone else has already submitted the same issue/request.
+## 📦 Build de Produção
 
-**What frameworks/libraries currently work on Bolt?**  
-Bolt.new supports most popular JavaScript frameworks and libraries. If it runs on StackBlitz, it will run on Bolt.new as well.
+```bash
+# Build otimizado
+pnpm run build
 
-**How can I add make sure my framework/project works well in bolt?**  
-We are excited to work with the JavaScript ecosystem to improve functionality in Bolt. Reach out to us via [hello@stackblitz.com](mailto:hello@stackblitz.com) to discuss how we can partner!
+# Preview local do build
+pnpm run preview
+
+# Deploy para Cloudflare Pages
+pnpm run deploy
+```
+
+## 📁 Estrutura do Projeto
+
+```
+devx-studio/
+├── app/
+│   ├── components/          # Componentes React (chat, workbench, editor, UI)
+│   ├── lib/
+│   │   ├── .server/llm/     # Integração com IA (server-side)
+│   │   ├── runtime/         # Parser de artefatos, executor de ações
+│   │   ├── stores/          # Estado global (Nanostores)
+│   │   ├── webcontainer/    # Boot e integração WebContainer
+│   │   └── persistence/     # IndexedDB para histórico
+│   ├── routes/              # Rotas Remix (_index, api.chat, api.enhancer)
+│   ├── styles/              # SCSS + tokens CSS (--devx-elements-*)
+│   └── types/               # Tipos TypeScript
+├── icons/                   # SVGs (logo, chat, stars)
+├── public/                  # Assets estáticos
+├── scripts/                 # Scripts utilitários (codemod)
+├── uno.config.ts            # Config UnoCSS (namespaces bolt: + devx:)
+├── vite.config.ts
+├── wrangler.toml            # Config Cloudflare
+└── package.json
+```
+
+## ⚠️ Status Atual & Limitações Conhecidas
+
+- **Beta**: O DevX Studio está em desenvolvimento ativo.
+- **Modelo IA Padrão**: Apenas Anthropic Claude 3.5 Sonnet suportado nativamente.
+- **WebContainer**: Usa versão interna (`1.3.0-internal.10`). Limitações:
+  - Sem `pip` (Python limitado à stdlib)
+  - Sem compiladores C/C++ (`g++`, `clang`)
+  - Sem `git` nativo
+  - Binários nativos não executáveis
+- **Deploy**: Requer conta Cloudflare configurada.
+- **Histórico**: Armazenado no IndexedDB do navegador (não sincroniza entre dispositivos).
+- **Mobile**: Funcionalidade limitada em telas pequenas.
+
+## 🤝 Contribuição
+
+Consulte [CONTRIBUTING.md](./CONTRIBUTING.md) para:
+- Fluxo de branches e commits
+- Testes obrigatórios antes de PR
+- Padrões de código e lint
+- Relato de bugs e propostas de features
+- Segurança
+
+## 📄 Licença
+
+MIT License — veja [LICENSE](./LICENSE) para detalhes.
+
+## 🙏 Acknowledgements
+
+A **DevX Studio** foi inicialmente construída a partir do código open source do **Bolt.new**, desenvolvido pela **StackBlitz**. Partes derivadas permanecem sujeitas aos avisos e à licença MIT presentes neste repositório.
+
+A DevX Studio utiliza a **WebContainer API** da StackBlitz. O uso comercial em produção pode exigir uma licença separada fornecida pela StackBlitz. Verifique os termos aplicáveis antes de um lançamento comercial.
+
+Este projeto não tem parceria, patrocínio, aprovação ou vínculo oficial com a StackBlitz.
+
+## 🔗 Links Úteis
+
+- [WebContainer API Docs](https://webcontainers.io/api)
+- [Remix Docs](https://remix.run/docs)
+- [Vercel AI SDK](https://sdk.vercel.ai/)
+- [Anthropic API](https://docs.anthropic.com/)

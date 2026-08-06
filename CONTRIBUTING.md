@@ -1,110 +1,213 @@
-[![Bolt Open Source Codebase](./public/social_preview_index.jpg)](https://bolt.new)
+# Contribuindo para a DevX Studio
 
-> Welcome to the **Bolt** open-source codebase! This repo contains a simple example app using the core components from bolt.new to help you get started building **AI-powered software development tools** powered by StackBlitz’s **WebContainer API**.
+Obrigado por contribuir com a DevX Studio! Este documento descreve o fluxo de trabalho, padrões e requisitos para contribuições.
 
-### Why Build with Bolt + WebContainer API
+## 📋 Sumário
 
-By building with the Bolt + WebContainer API you can create browser-based applications that let users **prompt, run, edit, and deploy** full-stack web apps directly in the browser, without the need for virtual machines. With WebContainer API, you can build apps that give AI direct access and full control over a **Node.js server**, **filesystem**, **package manager** and **dev terminal** inside your users browser tab. This powerful combination allows you to create a new class of development tools that support all major JavaScript libraries and Node packages right out of the box, all without remote environments or local installs.
+- [Criação de Branches](#criação-de-branches)
+- [Padrão de Commits](#padrão-de-commits)
+- [Instalação e Configuração](#instalação-e-configuração)
+- [Testes Obrigatórios](#testes-obrigatórios)
+- [Pull Requests](#pull-requests)
+- [Relato de Bugs](#relato-de-bugs)
+- [Propostas de Funcionalidades](#propostas-de-funcionalidades)
+- [Segurança](#segurança)
+- [Preservação do Protocolo Interno](#preservação-do-protocolo-interno)
+- [Preservação das Licenças](#preservação-das-licenças)
 
-### What’s the Difference Between Bolt (This Repo) and [Bolt.new](https://bolt.new)?
+---
 
-- **Bolt.new**: This is the **commercial product** from StackBlitz—a hosted, browser-based AI development tool that enables users to prompt, run, edit, and deploy full-stack web applications directly in the browser. Built on top of the [Bolt open-source repo](https://github.com/stackblitz/bolt.new) and powered by the StackBlitz **WebContainer API**.
+## Criação de Branches
 
-- **Bolt (This Repo)**: This open-source repository provides the core components used to make **Bolt.new**. This repo contains the UI interface for Bolt as well as the server components, built using [Remix Run](https://remix.run/). By leveraging this repo and StackBlitz’s **WebContainer API**, you can create your own AI-powered development tools and full-stack applications that run entirely in the browser.
+Use os prefixos abaixo para nomear branches:
 
-# Get Started Building with Bolt
+| Prefixo | Uso |
+|---------|-----|
+| `feat/` | Nova funcionalidade |
+| `fix/` | Correção de bug |
+| `refactor/` | Refatoração sem mudança de comportamento |
+| `docs/` | Atualização de documentação |
+| `chore/` | Tarefas de manutenção (deps, configs) |
+| `test/` | Adição ou ajuste de testes |
 
-Bolt combines the capabilities of AI with sandboxed development environments to create a collaborative experience where code can be developed by the assistant and the programmer together. Bolt combines [WebContainer API](https://webcontainers.io/api) with [Claude Sonnet 3.5](https://www.anthropic.com/news/claude-3-5-sonnet) using [Remix](https://remix.run/) and the [AI SDK](https://sdk.vercel.ai/).
+Exemplos:
+- `feat/multi-provider-support`
+- `fix/terminal-resize-bug`
+- `docs/update-readme-webcontainer`
 
-### WebContainer API
+---
 
-Bolt uses [WebContainers](https://webcontainers.io/) to run generated code in the browser. WebContainers provide Bolt with a full-stack sandbox environment using [WebContainer API](https://webcontainers.io/api). WebContainers run full-stack applications directly in the browser without the cost and security concerns of cloud hosted AI agents. WebContainers are interactive and editable, and enables Bolt's AI to run code and understand any changes from the user.
+## Padrão de Commits
 
-The [WebContainer API](https://webcontainers.io) is free for personal and open source usage. If you're building an application for commercial usage, you can learn more about our [WebContainer API commercial usage pricing here](https://stackblitz.com/pricing#webcontainer-api).
+Seguimos [Conventional Commits](https://www.conventionalcommits.org/):
 
-### Remix App
+```
+<tipo>(<escopo>): <descrição curta>
 
-Bolt is built with [Remix](https://remix.run/) and
-deployed using [CloudFlare Pages](https://pages.cloudflare.com/) and
-[CloudFlare Workers](https://workers.cloudflare.com/).
+[corpo opcional]
 
-### AI SDK Integration
-
-Bolt uses the [AI SDK](https://github.com/vercel/ai) to integrate with AI
-models. At this time, Bolt supports using Anthropic's Claude Sonnet 3.5.
-You can get an API key from the [Anthropic API Console](https://console.anthropic.com/) to use with Bolt.
-Take a look at how [Bolt uses the AI SDK](https://github.com/stackblitz/bolt.new/tree/main/app/lib/.server/llm)
-
-## Prerequisites
-
-Before you begin, ensure you have the following installed:
-
-- Node.js (v20.15.1)
-- pnpm (v9.4.0)
-
-## Setup
-
-1. Clone the repository (if you haven't already):
-
-```bash
-git clone https://github.com/stackblitz/bolt.new.git
+[rodapé opcional]
 ```
 
-2. Install dependencies:
+Tipos válidos: `feat`, `fix`, `refactor`, `docs`, `chore`, `test`, `perf`, `build`, `ci`.
+
+Exemplos:
+```
+feat(chat): adiciona suporte a múltiplos provedores de IA
+fix(terminal): corrige redimensionamento ao alternar tema
+refactor(stores): desacopla tokens DevX de Bolt
+docs(readme): atualiza instruções de deploy
+chore(deps): atualiza @webcontainer/api para 1.3.0
+```
+
+---
+
+## Instalação e Configuração
 
 ```bash
+# Clone o fork
+git clone https://github.com/<seu-usuario>/devx-studio.git
+cd devx-studio
+
+# Instale dependências
 pnpm install
-```
 
-3. Create a `.env.local` file in the root directory and add your Anthropic API key:
+# Configure variáveis de ambiente
+cp .env.example .env.local
+# Adicione ANTHROPIC_API_KEY em .env.local
 
-```
-ANTHROPIC_API_KEY=XXX
-```
-
-Optionally, you can set the debug level:
-
-```
-VITE_LOG_LEVEL=debug
-```
-
-**Important**: Never commit your `.env.local` file to version control. It's already included in .gitignore.
-
-## Available Scripts
-
-- `pnpm run dev`: Starts the development server.
-- `pnpm run build`: Builds the project.
-- `pnpm run start`: Runs the built application locally using Wrangler Pages. This script uses `bindings.sh` to set up necessary bindings so you don't have to duplicate environment variables.
-- `pnpm run preview`: Builds the project and then starts it locally, useful for testing the production build. Note, HTTP streaming currently doesn't work as expected with `wrangler pages dev`.
-- `pnpm test`: Runs the test suite using Vitest.
-- `pnpm run typecheck`: Runs TypeScript type checking.
-- `pnpm run typegen`: Generates TypeScript types using Wrangler.
-- `pnpm run deploy`: Builds the project and deploys it to Cloudflare Pages.
-
-## Development
-
-To start the development server:
-
-```bash
+# Verifique se tudo funciona
+pnpm run typecheck
+pnpm run test
 pnpm run dev
 ```
 
-This will start the Remix Vite development server.
+---
 
-## Testing
+## Testes Obrigatórios
 
-Run the test suite with:
-
-```bash
-pnpm test
-```
-
-## Deployment
-
-To deploy the application to Cloudflare Pages:
+Antes de abrir qualquer PR, **todos** os seguintes comandos devem passar:
 
 ```bash
-pnpm run deploy
+# TypeScript type checking
+pnpm run typecheck
+
+# Lint
+pnpm run lint
+
+# Testes unitários
+pnpm run test
+
+# Build de produção
+pnpm run build
 ```
 
-Make sure you have the necessary permissions and Wrangler is correctly configured for your Cloudflare account.
+**Não abra PRs que falhem em qualquer um desses comandos.**
+
+---
+
+## Pull Requests
+
+1. **Base**: `main` (ou branch de release ativa)
+2. **Título**: Seguir Conventional Commits
+3. **Descrição**: Explique *o que* e *por que*, não apenas *como*
+4. **Testes**: Inclua testes para novas funcionalidades ou correções
+5. **Documentação**: Atualize README/CONTRIBUTING se houver mudança visível ao usuário
+6. **Breaking changes**: Marque claramente no rodapé do commit (`BREAKING CHANGE:`)
+
+### Checklist de PR
+
+- [ ] `pnpm run typecheck` passa
+- [ ] `pnpm run lint` passa
+- [ ] `pnpm run test` passa
+- [ ] `pnpm run build` passa
+- [ ] Testes adicionados/atualizados para mudanças funcionais
+- [ ] Documentação atualizada se necessário
+- [ ] Sem avisos de console novos
+- [ ] Commits limpos (sem `fixup!`, `wip`, etc. — faça squash se necessário)
+
+---
+
+## Relato de Bugs
+
+Use o template de issue (`.github/ISSUE_TEMPLATE/bug_report.yml`) e inclua:
+
+- Versão do Node.js e pnpm
+- Sistema operacional
+- Passos para reproduzir
+- Comportamento esperado vs. observado
+- Logs relevantes (console do navegador, terminal)
+- Screenshots se aplicável
+
+---
+
+## Propostas de Funcionalidades
+
+Use o template de feature request (`.github/ISSUE_TEMPLATE/feature_request.md`) e descreva:
+
+- Problema que resolve
+- Alternativas consideradas
+- Impacto no protocolo interno (se houver)
+- Complexidade estimada
+- Disposição para implementar
+
+---
+
+## Segurança
+
+**Não reporte vulnerabilidades publicamente.** Envie para `security@x.technologies` (ou abra issue privada se configurado).
+
+Inclua:
+- Descrição da vulnerabilidade
+- Impacto potencial
+- Passos para reproduzir
+- Mitigação sugerida (se houver)
+
+---
+
+## Preservação do Protocolo Interno
+
+A DevX Studio mantém compatibilidade com o protocolo técnico original do Bolt.new. **Não altere** sem discussão prévia e aprovação:
+
+- Tags de artefato: `<boltArtifact>`, `<boltAction>`, `</boltArtifact>`, `</boltAction>`
+- Tipos: `BoltArtifactData`, `BoltAction`, `BoltActionData`
+- Parser: `app/lib/runtime/message-parser.ts`
+- Prompts técnicos e estrutura de artefatos
+- WebContainer API integration
+- Tokens CSS `--bolt-elements-*` e namespace `bolt:`
+- Nomes internos que fazem parte do protocolo de streaming
+
+Mudanças nesses itens quebram a compatibilidade com artefatos gerados e devem passar por RFC.
+
+---
+
+## Preservação das Licenças
+
+- **LICENSE** (MIT) **não deve ser alterado ou removido**.
+- Avisos de copyright do projeto original (StackBlitz/Bolt.new) **devem permanecer**.
+- Não apresente a X Technologies como autora exclusiva de código derivado.
+- Não remova atribuições exigidas pela licença MIT.
+- Não renomeie a licença para uma licença proprietária.
+- Se adicionar copyright da X Technologies, faça separadamente sem apagar avisos anteriores.
+- Dependências e suas licenças não devem ser modificadas.
+
+---
+
+## WebContainers & StackBlitz — Referências Necessárias
+
+| Referência | Classificação | Ação |
+|------------|---------------|------|
+| `WebContainer API` | Dependência técnica | **Preservar** — nome técnico |
+| `@webcontainer/api` | Dependência npm | **Preservar** — nome do pacote |
+| StackBlitz (WebContainers) | Atribuição legal / dependência | **Preservar** — crédito devido |
+| Licença MIT original | Atribuição legal | **Preservar** — obrigatório |
+| `bolt.new` (URL original) | Documentação histórica | **Preservar** em Acknowledgements |
+| Código derivado do Bolt.new | Atribuição legal | **Preservar** — avisos de copyright |
+
+Não remova ou reescreva essas referências. Elas são necessárias para conformidade legal e técnica.
+
+---
+
+## Dúvidas?
+
+Abra uma issue com label `question` ou inicie uma discussão no fórum do repositório.
