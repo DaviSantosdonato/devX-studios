@@ -3,9 +3,19 @@ import { readFileSync, writeFileSync, readdirSync, statSync } from 'node:fs';
 import { join, extname, relative } from 'node:path';
 
 const ROOT = process.cwd();
-const TARGET_DIRS = ['app', 'uno.config.ts'];
+const TARGET_DIRS = ['app'];
 const EXTENSIONS = ['.ts', '.tsx', '.css', '.scss'];
 const DRY_RUN = process.argv.includes('--dry-run');
+
+// Files to exclude from token replacement (they contain both bolt: and devx: namespaces)
+const EXCLUDE_FILES = [
+  'app/styles/variables.scss',
+  'uno.config.ts'
+];
+
+function normalizePath(path) {
+  return path.replace(/\\/g, '/');
+}
 
 const PATTERN = /\bbolt-elements-/g;
 const REPLACEMENT = 'devx-elements-';
@@ -19,7 +29,11 @@ function walk(dir, files = []) {
         walk(fullPath, files);
       }
     } else if (EXTENSIONS.includes(extname(entry.name))) {
-      files.push(fullPath);
+      // Check if file should be excluded
+      const relPath = normalizePath(relative(ROOT, fullPath));
+      if (!EXCLUDE_FILES.includes(relPath)) {
+        files.push(fullPath);
+      }
     }
   }
   return files;
