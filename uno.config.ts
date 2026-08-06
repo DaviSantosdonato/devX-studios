@@ -227,6 +227,118 @@ export default defineConfig({
         },
       },
     },
+    devx: {
+      elements: {
+        borderColor: 'var(--devx-elements-borderColor)',
+        borderColorActive: 'var(--devx-elements-borderColorActive)',
+        background: {
+          depth: {
+            1: 'var(--devx-elements-bg-depth-1)',
+            2: 'var(--devx-elements-bg-depth-2)',
+            3: 'var(--devx-elements-bg-depth-3)',
+            4: 'var(--devx-elements-bg-depth-4)',
+          },
+        },
+        textPrimary: 'var(--devx-elements-textPrimary)',
+        textSecondary: 'var(--devx-elements-textSecondary)',
+        textTertiary: 'var(--devx-elements-textTertiary)',
+        code: {
+          background: 'var(--devx-elements-code-background)',
+          text: 'var(--devx-elements-code-text)',
+        },
+        button: {
+          primary: {
+            background: 'var(--devx-elements-button-primary-background)',
+            backgroundHover: 'var(--devx-elements-button-primary-backgroundHover)',
+            text: 'var(--devx-elements-button-primary-text)',
+          },
+          secondary: {
+            background: 'var(--devx-elements-button-secondary-background)',
+            backgroundHover: 'var(--devx-elements-button-secondary-backgroundHover)',
+            text: 'var(--devx-elements-button-secondary-text)',
+          },
+          danger: {
+            background: 'var(--devx-elements-button-danger-background)',
+            backgroundHover: 'var(--devx-elements-button-danger-backgroundHover)',
+            text: 'var(--devx-elements-button-danger-text)',
+          },
+        },
+        item: {
+          contentDefault: 'var(--devx-elements-item-contentDefault)',
+          contentActive: 'var(--devx-elements-item-contentActive)',
+          contentAccent: 'var(--devx-elements-item-contentAccent)',
+          contentDanger: 'var(--devx-elements-item-contentDanger)',
+          backgroundDefault: 'var(--devx-elements-item-backgroundDefault)',
+          backgroundActive: 'var(--devx-elements-item-backgroundActive)',
+          backgroundAccent: 'var(--devx-elements-item-backgroundAccent)',
+          backgroundDanger: 'var(--devx-elements-item-backgroundDanger)',
+        },
+        actions: {
+          background: 'var(--devx-elements-actions-background)',
+          code: {
+            background: 'var(--devx-elements-actions-code-background)',
+          },
+        },
+        artifacts: {
+          background: 'var(--devx-elements-artifacts-background)',
+          backgroundHover: 'var(--devx-elements-artifacts-backgroundHover)',
+          borderColor: 'var(--devx-elements-artifacts-borderColor)',
+          inlineCode: {
+            background: 'var(--devx-elements-artifacts-inlineCode-background)',
+            text: 'var(--devx-elements-artifacts-inlineCode-text)',
+          },
+        },
+        messages: {
+          background: 'var(--devx-elements-messages-background)',
+          linkColor: 'var(--devx-elements-messages-linkColor)',
+          code: {
+            background: 'var(--devx-elements-messages-code-background)',
+          },
+          inlineCode: {
+            background: 'var(--devx-elements-messages-inlineCode-background)',
+            text: 'var(--devx-elements-messages-inlineCode-text)',
+          },
+        },
+        icon: {
+          success: 'var(--devx-elements-icon-success)',
+          error: 'var(--devx-elements-icon-error)',
+          primary: 'var(--devx-elements-icon-primary)',
+          secondary: 'var(--devx-elements-icon-secondary)',
+          tertiary: 'var(--devx-elements-icon-tertiary)',
+        },
+        preview: {
+          addressBar: {
+            background: 'var(--devx-elements-preview-addressBar-background)',
+            backgroundHover: 'var(--devx-elements-preview-addressBar-backgroundHover)',
+            backgroundActive: 'var(--devx-elements-preview-addressBar-backgroundActive)',
+            text: 'var(--devx-elements-preview-addressBar-text)',
+            textActive: 'var(--devx-elements-preview-addressBar-textActive)',
+          },
+        },
+        terminals: {
+          background: 'var(--devx-elements-terminals-background)',
+          buttonBackground: 'var(--devx-elements-terminals-buttonBackground)',
+        },
+        dividerColor: 'var(--devx-elements-dividerColor)',
+        loader: {
+          background: 'var(--devx-elements-loader-background)',
+          progress: 'var(--devx-elements-loader-progress)',
+        },
+        prompt: {
+          background: 'var(--devx-elements-prompt-background)',
+        },
+        sidebar: {
+          dropdownShadow: 'var(--devx-elements-sidebar-dropdownShadow)',
+          buttonBackgroundDefault: 'var(--devx-elements-sidebar-buttonBackgroundDefault)',
+          buttonBackgroundHover: 'var(--devx-elements-sidebar-buttonBackgroundHover)',
+          buttonText: 'var(--devx-elements-sidebar-buttonText)',
+        },
+        cta: {
+          background: 'var(--devx-elements-cta-background)',
+          text: 'var(--devx-elements-cta-text)',
+        },
+      },
+    },
   },
   transformers: [transformerDirectives()],
   presets: [
