@@ -102,6 +102,131 @@
   --bolt-terminal-brightMagenta: #bc05bc;
   --bolt-terminal-brightCyan: #0598bc;
   --bolt-terminal-brightWhite: #a5a5a5;
+
+  /* DevX Studio - Light Theme (mirrors Bolt tokens) */
+  --devx-elements-borderColor: theme('colors.alpha.gray.10');
+  --devx-elements-borderColorActive: theme('colors.accent.600');
+
+  --devx-elements-bg-depth-1: theme('colors.white');
+  --devx-elements-bg-depth-2: theme('colors.gray.50');
+  --devx-elements-bg-depth-3: theme('colors.gray.200');
+  --devx-elements-bg-depth-4: theme('colors.alpha.gray.5');
+
+  --devx-elements-textPrimary: theme('colors.gray.950');
+  --devx-elements-textSecondary: theme('colors.gray.600');
+  --devx-elements-textTertiary: theme('colors.gray.500');
+
+  --devx-elements-code-background: theme('colors.gray.100');
+  --devx-elements-code-text: theme('colors.gray.950');
+
+  --devx-elements-button-primary-background: theme('colors.alpha.accent.10');
+  --devx-elements-button-primary-backgroundHover: theme('colors.alpha.accent.20');
+  --devx-elements-button-primary-text: theme('colors.accent.500');
+
+  --devx-elements-button-secondary-background: theme('colors.alpha.gray.5');
+  --devx-elements-button-secondary-backgroundHover: theme('colors.alpha.gray.10');
+  --devx-elements-button-secondary-text: theme('colors.gray.950');
+
+  --devx-elements-button-danger-background: theme('colors.alpha.red.10');
+  --devx-elements-button-danger-backgroundHover: theme('colors.alpha.red.20');
+  --devx-elements-button-danger-text: theme('colors.red.500');
+
+  --devx-elements-item-contentDefault: theme('colors.alpha.gray.50');
+  --devx-elements-item-contentActive: theme('colors.gray.950');
+  --devx-elements-item-contentAccent: theme('colors.accent.700');
+  --devx-elements-item-contentDanger: theme('colors.red.500');
+  --devx-elements-item-backgroundDefault: rgba(0, 0, 0, 0);
+  --devx-elements-item-backgroundActive: theme('colors.alpha.gray.5');
+  --devx-elements-item-backgroundAccent: theme('colors.alpha.accent.10');
+  --devx-elements-item-backgroundDanger: theme('colors.alpha.red.10');
+
+  --devx-elements-loader-background: theme('colors.alpha.gray.10');
+  --devx-elements-loader-progress: theme('colors.accent.500');
+
+  --devx-elements-artifacts-background: theme('colors.white');
+  --devx-elements-artifacts-backgroundHover: theme('colors.alpha.gray.2');
+  --devx-elements-artifacts-borderColor: var(--devx-elements-borderColor);
+  --devx-elements-artifacts-inlineCode-background: theme('colors.gray.100');
+  --devx-elements-artifacts-inlineCode-text: var(--devx-elements-textPrimary);
+
+  --devx-elements-actions-background: theme('colors.white');
+  --devx-elements-actions-code-background: theme('colors.gray.800');
+
+  --devx-elements-messages-background: theme('colors.gray.100');
+  --devx-elements-messages-linkColor: theme('colors.accent.500');
+  --devx-elements-messages-code-background: theme('colors.gray.800');
+  --devx-elements-messages-inlineCode-background: theme('colors.gray.200');
+  --devx-elements-messages-inlineCode-text: theme('colors.gray.800');
+
+  --devx-elements-icon-success: theme('colors.green.500');
+  --devx-elements-icon-error: theme('colors.red.500');
+  --devx-elements-icon-primary: theme('colors.gray.950');
+  --devx-elements-icon-secondary: theme('colors.gray.600');
+  --devx-elements-icon-tertiary: theme('colors.gray.500');
+
+  --devx-elements-dividerColor: theme('colors.gray.100');
+
+  --devx-elements-prompt-background: theme('colors.alpha.white.80');
+
+  --devx-elements-sidebar-dropdownShadow: theme('colors.alpha.gray.10');
+  --devx-elements-sidebar-buttonBackgroundDefault: theme('colors.alpha.accent.10');
+  --devx-elements-sidebar-buttonBackgroundHover: theme('colors.alpha.accent.20');
+  --devx-elements-sidebar-buttonText: theme('colors.accent.700');
+
+  --devx-elements-preview-addressBar-background: theme('colors.gray.100');
+  --devx-elements-preview-addressBar-backgroundHover: theme('colors.alpha.gray.5');
+  --devx-elements-preview-addressBar-backgroundActive: theme('colors.white');
+  --devx-elements-preview-addressBar-text: var(--devx-elements-textSecondary);
+  --devx-elements-preview-addressBar-textActive: var(--devx-elements-textPrimary);
+
+  --devx-elements-terminals-background: theme('colors.white');
+  --devx-elements-terminals-buttonBackground: var(--devx-elements-bg-depth-4);
+
+  --devx-elements-cta-background: theme('colors.gray.100');
+  --devx-elements-cta-text: theme('colors.gray.950');
+
+  /* DevX Terminal Colors (mirrors Bolt) */
+  --devx-terminal-background: var(--devx-elements-terminals-background);
+  --devx-terminal-foreground: #333333;
+  --devx-terminal-selection-background: #00000040;
+  --devx-terminal-black: #000000;
+  --devx-terminal-red: #cd3131;
+  --devx-terminal-green: #00bc00;
+  --devx-terminal-yellow: #949800;
+  --devx-terminal-blue: #0451a5;
+  --devx-terminal-magenta: #bc05bc;
+  --devx-terminal-cyan: #0598bc;
+  --devx-terminal-white: #555555;
+  --devx-terminal-brightBlack: #686868;
+  --devx-terminal-brightRed: #cd3131;
+  --devx-terminal-brightGreen: #00bc00;
+  --devx-terminal-brightYellow: #949800;
+  --devx-terminal-brightBlue: #0451a5;
+  --devx-terminal-brightMagenta: #bc05bc;
+  --devx-terminal-brightCyan: #0598bc;
+  --devx-terminal-brightWhite: #a5a5a5;
+
+  /* DevX Terminal Element Colors (mirrors Bolt) */
+  --devx-elements-terminal-backgroundColor: var(--devx-terminal-background);
+  --devx-elements-terminal-textColor: var(--devx-terminal-foreground);
+  --devx-elements-terminal-cursorColor: var(--devx-terminal-foreground);
+  --devx-elements-terminal-selection-backgroundColor: var(--devx-terminal-selection-background);
+  --devx-elements-terminal-color-black: var(--devx-terminal-black);
+  --devx-elements-terminal-color-red: var(--devx-terminal-red);
+  --devx-elements-terminal-color-green: var(--devx-terminal-green);
+  --devx-elements-terminal-color-yellow: var(--devx-terminal-yellow);
+  --devx-elements-terminal-color-blue: var(--devx-terminal-blue);
+  --devx-elements-terminal-color-magenta: var(--devx-terminal-magenta);
+  --devx-elements-terminal-color-cyan: var(--devx-terminal-cyan);
+  --devx-elements-terminal-color-white: var(--devx-terminal-white);
+  --devx-elements-terminal-color-brightBlack: var(--devx-terminal-brightBlack);
+  --devx-elements-terminal-color-brightRed: var(--devx-terminal-brightRed);
+  --devx-elements-terminal-color-brightGreen: var(--devx-terminal-brightGreen);
+  --devx-elements-terminal-color-brightYellow: var(--devx-terminal-brightYellow);
+  --devx-elements-terminal-color-brightBlue: var(--devx-terminal-brightBlue);
+  --devx-elements-terminal-color-brightMagenta: var(--devx-terminal-brightMagenta);
+  --devx-elements-terminal-color-brightCyan: var(--devx-terminal-brightCyan);
+  --devx-elements-terminal-color-brightWhite: var(--devx-terminal-brightWhite);
 }
 
 /* Color Tokens Dark Theme */
@@ -208,6 +333,131 @@
   --bolt-terminal-brightMagenta: #ff6ac1;
   --bolt-terminal-brightCyan: #9aedfe;
   --bolt-terminal-brightWhite: #f1f1f0;
+
+  /* DevX Studio - Dark Theme (mirrors Bolt tokens) */
+  --devx-elements-borderColor: theme('colors.alpha.gray.10');
+  --devx-elements-borderColorActive: theme('colors.accent.600');
+
+  --devx-elements-bg-depth-1: theme('colors.white');
+  --devx-elements-bg-depth-2: theme('colors.gray.50');
+  --devx-elements-bg-depth-3: theme('colors.gray.200');
+  --devx-elements-bg-depth-4: theme('colors.alpha.gray.5');
+
+  --devx-elements-textPrimary: theme('colors.gray.950');
+  --devx-elements-textSecondary: theme('colors.gray.600');
+  --devx-elements-textTertiary: theme('colors.gray.500');
+
+  --devx-elements-code-background: theme('colors.gray.100');
+  --devx-elements-code-text: theme('colors.gray.950');
+
+  --devx-elements-button-primary-background: theme('colors.alpha.accent.10');
+  --devx-elements-button-primary-backgroundHover: theme('colors.alpha.accent.20');
+  --devx-elements-button-primary-text: theme('colors.accent.500');
+
+  --devx-elements-button-secondary-background: theme('colors.alpha.gray.5');
+  --devx-elements-button-secondary-backgroundHover: theme('colors.alpha.gray.10');
+  --devx-elements-button-secondary-text: theme('colors.gray.950');
+
+  --devx-elements-button-danger-background: theme('colors.alpha.red.10');
+  --devx-elements-button-danger-backgroundHover: theme('colors.alpha.red.20');
+  --devx-elements-button-danger-text: theme('colors.red.500');
+
+  --devx-elements-item-contentDefault: theme('colors.alpha.gray.50');
+  --devx-elements-item-contentActive: theme('colors.gray.950');
+  --devx-elements-item-contentAccent: theme('colors.accent.700');
+  --devx-elements-item-contentDanger: theme('colors.red.500');
+  --devx-elements-item-backgroundDefault: rgba(0, 0, 0, 0);
+  --devx-elements-item-backgroundActive: theme('colors.alpha.gray.5');
+  --devx-elements-item-backgroundAccent: theme('colors.alpha.accent.10');
+  --devx-elements-item-backgroundDanger: theme('colors.alpha.red.10');
+
+  --devx-elements-loader-background: theme('colors.alpha.gray.10');
+  --devx-elements-loader-progress: theme('colors.accent.500');
+
+  --devx-elements-artifacts-background: theme('colors.white');
+  --devx-elements-artifacts-backgroundHover: theme('colors.alpha.gray.2');
+  --devx-elements-artifacts-borderColor: var(--devx-elements-borderColor);
+  --devx-elements-artifacts-inlineCode-background: theme('colors.gray.100');
+  --devx-elements-artifacts-inlineCode-text: var(--devx-elements-textPrimary);
+
+  --devx-elements-actions-background: theme('colors.white');
+  --devx-elements-actions-code-background: theme('colors.gray.800');
+
+  --devx-elements-messages-background: theme('colors.gray.100');
+  --devx-elements-messages-linkColor: theme('colors.accent.500');
+  --devx-elements-messages-code-background: theme('colors.gray.800');
+  --devx-elements-messages-inlineCode-background: theme('colors.gray.200');
+  --devx-elements-messages-inlineCode-text: theme('colors.gray.800');
+
+  --devx-elements-icon-success: theme('colors.green.500');
+  --devx-elements-icon-error: theme('colors.red.500');
+  --devx-elements-icon-primary: theme('colors.gray.950');
+  --devx-elements-icon-secondary: theme('colors.gray.600');
+  --devx-elements-icon-tertiary: theme('colors.gray.500');
+
+  --devx-elements-dividerColor: theme('colors.gray.100');
+
+  --devx-elements-prompt-background: theme('colors.alpha.white.80');
+
+  --devx-elements-sidebar-dropdownShadow: theme('colors.alpha.gray.10');
+  --devx-elements-sidebar-buttonBackgroundDefault: theme('colors.alpha.accent.10');
+  --devx-elements-sidebar-buttonBackgroundHover: theme('colors.alpha.accent.20');
+  --devx-elements-sidebar-buttonText: theme('colors.accent.700');
+
+  --devx-elements-preview-addressBar-background: theme('colors.gray.100');
+  --devx-elements-preview-addressBar-backgroundHover: theme('colors.alpha.gray.5');
+  --devx-elements-preview-addressBar-backgroundActive: theme('colors.white');
+  --devx-elements-preview-addressBar-text: var(--devx-elements-textSecondary);
+  --devx-elements-preview-addressBar-textActive: var(--devx-elements-textPrimary);
+
+  --devx-elements-terminals-background: theme('colors.white');
+  --devx-elements-terminals-buttonBackground: var(--devx-elements-bg-depth-4);
+
+  --devx-elements-cta-background: theme('colors.gray.100');
+  --devx-elements-cta-text: theme('colors.gray.950');
+
+  /* DevX Terminal Colors (mirrors Bolt) */
+  --devx-terminal-background: var(--devx-elements-terminals-background);
+  --devx-terminal-foreground: #333333;
+  --devx-terminal-selection-background: #00000040;
+  --devx-terminal-black: #000000;
+  --devx-terminal-red: #cd3131;
+  --devx-terminal-green: #00bc00;
+  --devx-terminal-yellow: #949800;
+  --devx-terminal-blue: #0451a5;
+  --devx-terminal-magenta: #bc05bc;
+  --devx-terminal-cyan: #0598bc;
+  --devx-terminal-white: #555555;
+  --devx-terminal-brightBlack: #686868;
+  --devx-terminal-brightRed: #cd3131;
+  --devx-terminal-brightGreen: #00bc00;
+  --devx-terminal-brightYellow: #949800;
+  --devx-terminal-brightBlue: #0451a5;
+  --devx-terminal-brightMagenta: #bc05bc;
+  --devx-terminal-brightCyan: #0598bc;
+  --devx-terminal-brightWhite: #a5a5a5;
+
+  /* DevX Terminal Element Colors (mirrors Bolt) */
+  --devx-elements-terminal-backgroundColor: var(--devx-terminal-background);
+  --devx-elements-terminal-textColor: var(--devx-terminal-foreground);
+  --devx-elements-terminal-cursorColor: var(--devx-terminal-foreground);
+  --devx-elements-terminal-selection-backgroundColor: var(--devx-terminal-selection-background);
+  --devx-elements-terminal-color-black: var(--devx-terminal-black);
+  --devx-elements-terminal-color-red: var(--devx-terminal-red);
+  --devx-elements-terminal-color-green: var(--devx-terminal-green);
+  --devx-elements-terminal-color-yellow: var(--devx-terminal-yellow);
+  --devx-elements-terminal-color-blue: var(--devx-terminal-blue);
+  --devx-elements-terminal-color-magenta: var(--devx-terminal-magenta);
+  --devx-elements-terminal-color-cyan: var(--devx-terminal-cyan);
+  --devx-elements-terminal-color-white: var(--devx-terminal-white);
+  --devx-elements-terminal-color-brightBlack: var(--devx-terminal-brightBlack);
+  --devx-elements-terminal-color-brightRed: var(--devx-terminal-brightRed);
+  --devx-elements-terminal-color-brightGreen: var(--devx-terminal-brightGreen);
+  --devx-elements-terminal-color-brightYellow: var(--devx-terminal-brightYellow);
+  --devx-elements-terminal-color-brightBlue: var(--devx-terminal-brightBlue);
+  --devx-elements-terminal-color-brightMagenta: var(--devx-terminal-brightMagenta);
+  --devx-elements-terminal-color-brightCyan: var(--devx-terminal-brightCyan);
+  --devx-elements-terminal-color-brightWhite: var(--devx-terminal-brightWhite);
 }
 
 /*
