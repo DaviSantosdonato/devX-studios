@@ -5,6 +5,8 @@
 
 import type { LanguageModel } from 'ai';
 
+export { type LanguageModel } from 'ai';
+
 /**
  * Supported provider identifiers.
  * Extensible for new providers without breaking existing ones.
@@ -127,4 +129,10 @@ export interface ProviderAdapter {
    * Returns capabilities of a specific model.
    */
   getCapabilities(modelId: string): ModelCapabilities | undefined;
+
+  /**
+   * Returns provider-specific stream options (headers, etc.) for a model.
+   * Used by streaming layer to apply provider-specific settings.
+   */
+  getStreamOptions?(modelId: string): Record<string, string> | undefined;
 }

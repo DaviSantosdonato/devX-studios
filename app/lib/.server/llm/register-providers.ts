@@ -4,15 +4,16 @@ import { anthropicAdapter, ANTHROPIC_MODELS } from './providers/anthropic';
 import { deepseekAdapter, DEEPSEEK_MODELS } from './providers/deepseek';
 import { nvidiaAdapter, NVIDIA_MODELS } from './providers/nvidia';
 
-let isRegistered = false;
-
 export function registerBuiltInProviders(): void {
-  if (isRegistered) {
+  // check if already registered
+  if (providerRegistry.has('anthropic') && providerRegistry.has('deepseek') && providerRegistry.has('nvidia')) {
     return;
   }
 
   // register Anthropic provider
-  providerRegistry.register(anthropicAdapter);
+  if (!providerRegistry.has('anthropic')) {
+    providerRegistry.register(anthropicAdapter);
+  }
 
   // register Anthropic models
   for (const model of ANTHROPIC_MODELS) {
@@ -20,7 +21,9 @@ export function registerBuiltInProviders(): void {
   }
 
   // register DeepSeek provider
-  providerRegistry.register(deepseekAdapter);
+  if (!providerRegistry.has('deepseek')) {
+    providerRegistry.register(deepseekAdapter);
+  }
 
   // register DeepSeek models
   for (const model of DEEPSEEK_MODELS) {
@@ -28,12 +31,12 @@ export function registerBuiltInProviders(): void {
   }
 
   // register NVIDIA provider
-  providerRegistry.register(nvidiaAdapter);
+  if (!providerRegistry.has('nvidia')) {
+    providerRegistry.register(nvidiaAdapter);
+  }
 
   // register NVIDIA models
   for (const model of NVIDIA_MODELS) {
     modelRegistry.register(model);
   }
-
-  isRegistered = true;
 }

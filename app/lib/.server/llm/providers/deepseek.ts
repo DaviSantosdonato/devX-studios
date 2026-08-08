@@ -63,7 +63,14 @@ export class DeepSeekProviderAdapter {
       throw new Error(`Model "${modelId}" not found in DeepSeek provider`);
     }
 
-    return createOpenAICompatibleModel(config, model.remoteModelId);
+    // deepseek adapter provides its own baseURL
+    return createOpenAICompatibleModel(
+      {
+        ...config,
+        baseURL: DEEPSEEK_BASE_URL,
+      },
+      model.remoteModelId,
+    );
   }
 
   normalizeError(error: unknown, modelId: string) {
@@ -74,6 +81,10 @@ export class DeepSeekProviderAdapter {
   getCapabilities(modelId: string) {
     const model = this.models.find((m) => m.id === modelId);
     return model?.capabilities;
+  }
+
+  getStreamOptions(_modelId: string): Record<string, string> | undefined {
+    return undefined;
   }
 }
 

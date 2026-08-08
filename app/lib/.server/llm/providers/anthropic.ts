@@ -1,6 +1,11 @@
 import { createAnthropic } from '@ai-sdk/anthropic';
-import type { ProviderAdapter, ProviderConfiguration, ModelDefinition, ModelCapabilities } from '../types';
-import { ProviderError, normalizeProviderError, createProviderError } from '../errors';
+import type {
+  ProviderAdapter,
+  ProviderConfiguration,
+  ModelDefinition,
+  ModelCapabilities,
+} from '~/lib/.server/llm/types';
+import { ProviderError, normalizeProviderError, createProviderError } from '~/lib/.server/llm/errors';
 
 export const ANTHROPIC_PROVIDER_ID = 'anthropic' as const;
 export const ANTHROPIC_PROVIDER_NAME = 'Anthropic' as const;
@@ -42,7 +47,7 @@ export class AnthropicProviderAdapter implements ProviderAdapter {
       return false;
     }
 
-    // Basic format check for Anthropic keys
+    // basic format check for Anthropic keys
     return config.apiKey.startsWith('sk-ant-');
   }
 
@@ -65,7 +70,6 @@ export class AnthropicProviderAdapter implements ProviderAdapter {
       headers: config.headers,
     });
 
-    // Apply Anthropic-specific headers for max-tokens beta
     return anthropic(model.remoteModelId);
   }
 
@@ -77,6 +81,18 @@ export class AnthropicProviderAdapter implements ProviderAdapter {
   getCapabilities(modelId: string): ModelCapabilities | undefined {
     const model = this.models.find((m) => m.id === modelId);
     return model?.capabilities;
+  }
+
+  getStreamOptions(modelId: string): Record<string, string> | undefined {
+    const model = this.models.find((m) => m.id === modelId);
+
+    if (model?.id === CLAUDE_SONNET_35_MODEL_ID) {
+      return {
+        'anthropic-beta': 'max-tokens-3-5-sonnet-2024-07-15',
+      };
+    }
+
+    return undefined;
   }
 }
 

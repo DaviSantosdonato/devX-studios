@@ -69,7 +69,14 @@ export class NvidiaNimProviderAdapter {
       throw new Error(`Model "${modelId}" not found in NVIDIA provider`);
     }
 
-    return createOpenAICompatibleModel(config, model.remoteModelId);
+    // nvidia adapter provides its own baseURL
+    return createOpenAICompatibleModel(
+      {
+        ...config,
+        baseURL: NVIDIA_BASE_URL,
+      },
+      model.remoteModelId,
+    );
   }
 
   normalizeError(error: unknown, modelId: string) {
@@ -80,6 +87,10 @@ export class NvidiaNimProviderAdapter {
   getCapabilities(modelId: string) {
     const model = this.models.find((m) => m.id === modelId);
     return model?.capabilities;
+  }
+
+  getStreamOptions(_modelId: string): Record<string, string> | undefined {
+    return undefined;
   }
 }
 
