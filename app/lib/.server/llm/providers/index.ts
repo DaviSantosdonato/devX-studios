@@ -3,14 +3,13 @@
  * Atualmente vazio - provedores serão adicionados conforme implementados.
  */
 
-export * from '../types';
-export * from '../capabilities';
-export * from '../env';
-export * from '../provider-registry';
-export * from '../model-registry';
+export * from '~/lib/.server/llm/types';
+export * from '~/lib/.server/llm/capabilities';
+export * from '~/lib/.server/llm/env';
+export * from '~/lib/.server/llm/provider-registry';
+export * from '~/lib/.server/llm/model-registry';
 
-// Provedores (a serem implementados)
-// export * from './anthropic';
-// export * from './openai';
-// export * from './google';
-// export * from './openai-compatible';
+// provedores
+export * from './anthropic';
+export * from './openai-compatible';
+export * from './deepseek';

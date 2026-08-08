@@ -1,31 +1,14 @@
-/**
- * Catálogo de modelos de IA.
- * Gerencia definições de modelos, validações e consultas.
- */
-
-import type {
-  ModelDefinition,
-  ModelStatus,
-  ProviderId,
-  ProviderErrorCode,
-  ProviderError,
-  ModelCapabilities,
-} from './types';
+import type { ModelDefinition, ModelStatus, ProviderId } from './types';
 
 /**
- * Erro interno do model registry.
+ * Internal model registry error.
  */
 export class ModelRegistryError extends Error {
-  public readonly code:
-    | 'DUPLICATE_MODEL'
-    | 'MODEL_NOT_FOUND'
-    | 'INVALID_MODEL'
-    | 'DUPLICATE_DEFAULT'
-    | 'UNKNOWN_PROVIDER';
+  readonly code: 'DUPLICATE_MODEL' | 'MODEL_NOT_FOUND' | 'INVALID_MODEL' | 'DUPLICATE_DEFAULT' | 'UNKNOWN_PROVIDER';
 
   constructor(
     code: 'DUPLICATE_MODEL' | 'MODEL_NOT_FOUND' | 'INVALID_MODEL' | 'DUPLICATE_DEFAULT' | 'UNKNOWN_PROVIDER',
-    message: string
+    message: string,
   ) {
     super(message);
     this.name = 'ModelRegistryError';
@@ -34,11 +17,12 @@ export class ModelRegistryError extends Error {
 }
 
 /**
- * Lista de ProviderIds conhecidos conceitualmente.
- * Usada para validação sem requerer registro prévio do provider.
+ * List of known ProviderIds conceptually.
+ * Used for validation without requiring provider registration.
  */
 export const KNOWN_PROVIDER_IDS: readonly ProviderId[] = [
   'anthropic',
+  'deepseek',
   'openai',
   'google',
   'openai-compatible',
@@ -46,179 +30,178 @@ export const KNOWN_PROVIDER_IDS: readonly ProviderId[] = [
 ] as const;
 
 /**
- * ModelRegistry - Catálogo de modelos.
- * Validações estritas para evitar inconsistências.
+ * ModelRegistry - Model catalog.
+ * Strict validations to avoid inconsistencies.
  */
 export class ModelRegistry {
-  private models = new Map<string, ModelDefinition>();
-  private defaults = new Map<ProviderId, string>(); // providerId -> default modelId
+  private _models = new Map<string, ModelDefinition>();
+  private _defaults = new Map<ProviderId, string>(); // providerId -> default modelId
 
   /**
-   * Registra um modelo.
-   * Validações:
-   * - ID único
-   * - ProviderId conhecido
-   * - Campos obrigatórios
-   * - No máximo um default por provider
+   * Registers a model.
+   * Validations:
+   * - Unique ID
+   * - Known ProviderId
+   * - Required fields
+   * - At most one default per provider
    */
   register(model: ModelDefinition): void {
-    // ID único
-    if (this.models.has(model.id)) {
-      throw new ModelRegistryError(
-        'DUPLICATE_MODEL',
-        `Modelo com ID "${model.id}" já está registrado`
-      );
+    // unique ID
+    if (this._models.has(model.id)) {
+      throw new ModelRegistryError('DUPLICATE_MODEL', `Modelo com ID "${model.id}" já está registrado`);
     }
 
-    // ProviderId conhecido
+    // known ProviderId
     if (!KNOWN_PROVIDER_IDS.includes(model.providerId)) {
       throw new ModelRegistryError(
         'UNKNOWN_PROVIDER',
-        `ProviderId "${model.providerId}" não reconhecido. Conhecidos: ${KNOWN_PROVIDER_IDS.join(', ')}`
+        `ProviderId "${model.providerId}" não reconhecido. Conhecidos: ${KNOWN_PROVIDER_IDS.join(', ')}`,
       );
     }
 
-    // Campos obrigatórios
+    // required fields
     if (!model.id || !model.name || !model.providerId || !model.requiredEnvVar || !model.remoteModelId) {
-      throw new ModelRegistryError(
-        'INVALID_MODEL',
-        `Modelo "${model.id}" tem campos obrigatórios faltando`
-      );
+      throw new ModelRegistryError('INVALID_MODEL', `Modelo "${model.id}" tem campos obrigatórios faltando`);
     }
 
-    // Valida capabilities
+    // validate capabilities
     if (!model.capabilities || typeof model.capabilities !== 'object') {
-      throw new ModelRegistryError(
-        'INVALID_MODEL',
-        `Modelo "${model.id}" deve ter capabilities válidas`
-      );
+      throw new ModelRegistryError('INVALID_MODEL', `Modelo "${model.id}" deve ter capabilities válidas`);
     }
 
-    // Valida status
+    // validate status
     const validStatuses: ModelStatus[] = ['available', 'unavailable', 'experimental', 'deprecated'];
+
     if (!validStatuses.includes(model.status)) {
-      throw new ModelRegistryError(
-        'INVALID_MODEL',
-        `Modelo "${model.id}" tem status inválido: ${model.status}`
-      );
+      throw new ModelRegistryError('INVALID_MODEL', `Modelo "${model.id}" tem status inválido: ${model.status}`);
     }
 
-    // Default único por provider
+    // default unique per provider
     if (model.isDefault) {
-      const existingDefault = this.defaults.get(model.providerId);
+      const existingDefault = this._defaults.get(model.providerId);
+
       if (existingDefault && existingDefault !== model.id) {
         throw new ModelRegistryError(
           'DUPLICATE_DEFAULT',
-          `Já existe modelo padrão para provider "${model.providerId}": "${existingDefault}"`
+          `Já existe modelo padrão para provider "${model.providerId}": "${existingDefault}"`,
         );
       }
-      this.defaults.set(model.providerId, model.id);
+
+      this._defaults.set(model.providerId, model.id);
     }
 
-    this.models.set(model.id, model);
+    this._models.set(model.id, model);
   }
 
   /**
-   * Busca modelo por ID interno.
-   * Lança erro se não encontrado.
+   * Gets model by internal ID.
+   * Throws error if not found.
    */
   get(modelId: string): ModelDefinition {
-    const model = this.models.get(modelId);
+    const model = this._models.get(modelId);
+
     if (!model) {
-      const error = new Error(`Modelo "${modelId}" não encontrado`) as any;
-      error.code = 'MODEL_NOT_FOUND';
+      const error = new Error(`Modelo "${modelId}" não encontrado`);
+      (error as Error & { code?: string }).code = 'MODEL_NOT_FOUND';
       throw error;
     }
+
     return model;
   }
 
   /**
-   * Busca modelo por ID (versão segura).
+   * Gets model by ID (safe version).
    */
   tryGet(modelId: string): ModelDefinition | undefined {
-    return this.models.get(modelId);
+    return this._models.get(modelId);
   }
 
   /**
-   * Lista todos os modelos registrados.
+   * Lists all registered models.
    */
   list(): readonly ModelDefinition[] {
-    return Array.from(this.models.values());
+    return Array.from(this._models.values());
   }
 
   /**
-   * Filtra modelos por provider.
+   * Filters models by provider.
    */
   getByProvider(providerId: ProviderId): readonly ModelDefinition[] {
     return this.list().filter((m) => m.providerId === providerId);
   }
 
   /**
-   * Filtra modelos por status.
+   * Filters models by status.
    */
   getByStatus(status: ModelStatus): readonly ModelDefinition[] {
     return this.list().filter((m) => m.status === status);
   }
 
   /**
-   * Obtém modelo padrão de um provider.
-   * Lança erro se não houver default.
+   * Gets default model for provider.
+   * Throws error if no default.
    */
   getDefault(providerId: ProviderId): ModelDefinition {
-    const defaultId = this.defaults.get(providerId);
+    const defaultId = this._defaults.get(providerId);
+
     if (!defaultId) {
-      const error = new Error(`Nenhum modelo padrão definido para provider "${providerId}"`) as any;
-      error.code = 'MODEL_NOT_FOUND';
+      const error = new Error(`Nenhum modelo padrão definido para provider "${providerId}"`);
+      (error as Error & { code?: string }).code = 'MODEL_NOT_FOUND';
       throw error;
     }
+
     return this.get(defaultId);
   }
 
   /**
-   * Tenta obter modelo padrão (versão segura).
+   * Tries to get default model (safe version).
    */
   tryGetDefault(providerId: ProviderId): ModelDefinition | undefined {
-    const defaultId = this.defaults.get(providerId);
+    const defaultId = this._defaults.get(providerId);
     return defaultId ? this.tryGet(defaultId) : undefined;
   }
 
   /**
-   * Verifica se modelo existe.
+   * Checks if model exists.
    */
   has(modelId: string): boolean {
-    return this.models.has(modelId);
+    return this._models.has(modelId);
   }
 
   /**
-   * Remove modelo (apenas para testes).
+   * Removes model (tests only).
    */
   remove(modelId: string): boolean {
-    const model = this.models.get(modelId);
-    if (!model) return false;
+    const model = this._models.get(modelId);
+
+    if (!model) {
+      return false;
+    }
 
     if (model.isDefault) {
-      this.defaults.delete(model.providerId);
+      this._defaults.delete(model.providerId);
     }
-    return this.models.delete(modelId);
+
+    return this._models.delete(modelId);
   }
 
   /**
-   * Limpa todos os modelos (apenas para testes).
+   * Clears all models (tests only).
    */
   clear(): void {
-    this.models.clear();
-    this.defaults.clear();
+    this._models.clear();
+    this._defaults.clear();
   }
 
   /**
-   * Retorna contagem de modelos.
+   * Returns model count.
    */
   size(): number {
-    return this.models.size;
+    return this._models.size;
   }
 }
 
 /**
- * Instância singleton do registry.
+ * Singleton registry instance.
  */
 export const modelRegistry = new ModelRegistry();

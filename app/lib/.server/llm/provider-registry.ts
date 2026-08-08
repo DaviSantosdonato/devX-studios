@@ -1,17 +1,17 @@
 /**
- * Registro de provedores de IA.
- * Estratégia: instância única (singleton) com mapa imutável após registro.
- * Fácil de testar, previsível, sem estado global mutável perigoso.
+ * AI Provider Registry.
+ * Strategy: singleton instance with immutable map after registration.
+ * Easy to test, predictable, no dangerous mutable global state.
  */
 
-import type { ProviderAdapter, ProviderId, ProviderConfiguration, ModelDefinition, ModelCapabilities } from './types';
-import { ProviderError } from './types';
+import type { ProviderAdapter, ProviderId } from './types';
+import { ProviderError } from './errors';
 
 /**
- * Erro interno do registry (não exposto ao usuário).
+ * Internal registry error (not exposed to user).
  */
 export class ProviderRegistryError extends Error {
-  public readonly code: 'DUPLICATE_PROVIDER' | 'PROVIDER_NOT_FOUND' | 'INVALID_ADAPTER';
+  readonly code: 'DUPLICATE_PROVIDER' | 'PROVIDER_NOT_FOUND' | 'INVALID_ADAPTER';
 
   constructor(code: 'DUPLICATE_PROVIDER' | 'PROVIDER_NOT_FOUND' | 'INVALID_ADAPTER', message: string) {
     super(message);
@@ -21,71 +21,69 @@ export class ProviderRegistryError extends Error {
 }
 
 /**
- * ProviderRegistry - Registro de adapters de provedores.
- * Não registra provedores automaticamente. O registro é explícito.
+ * ProviderRegistry - Provider adapter registry.
+ * Does not register providers automatically. Registration is explicit.
  */
 export class ProviderRegistry {
-  private adapters = new Map<ProviderId, ProviderAdapter>();
-  private frozen = false;
+  private _adapters = new Map<ProviderId, ProviderAdapter>();
+  private _frozen = false;
 
   /**
-   * Registra um adapter.
-   * Lança erro se ID duplicado ou registry congelado.
+   * Registers an adapter.
+   * Throws error if duplicate ID or registry frozen.
    */
   register(adapter: ProviderAdapter): void {
-    if (this.frozen) {
-      throw new ProviderRegistryError('DUPLICATE_PROVIDER', 'Registry está congelado, não é possível registrar novos providers');
-    }
-
-    if (this.adapters.has(adapter.id)) {
+    if (this._frozen) {
       throw new ProviderRegistryError(
         'DUPLICATE_PROVIDER',
-        `Provider "${adapter.id}" já está registrado`
+        'Registry está congelado, não é possível registrar novos providers',
       );
     }
 
-    // Validação básica do adapter
+    if (this._adapters.has(adapter.id)) {
+      throw new ProviderRegistryError('DUPLICATE_PROVIDER', `Provider "${adapter.id}" já está registrado`);
+    }
+
+    // basic adapter validation
     if (!adapter.id || !adapter.name || !Array.isArray(adapter.models)) {
-      throw new ProviderRegistryError(
-        'INVALID_ADAPTER',
-        'Adapter inválido: id, name e models são obrigatórios'
-      );
+      throw new ProviderRegistryError('INVALID_ADAPTER', 'Adapter inválido: id, name e models são obrigatórios');
     }
 
-    // Valida modelos
+    // validate models
     for (const model of adapter.models) {
       if (!model.id || !model.providerId || !model.requiredEnvVar || !model.remoteModelId) {
         throw new ProviderRegistryError(
           'INVALID_ADAPTER',
-          `Modelo "${model.id}" do provider "${adapter.id}" tem campos obrigatórios faltando`
+          `Modelo "${model.id}" do provider "${adapter.id}" tem campos obrigatórios faltando`,
         );
       }
     }
 
-    this.adapters.set(adapter.id, adapter);
+    this._adapters.set(adapter.id, adapter);
   }
 
   /**
-   * Congela o registry impedindo novos registros.
-   * Útil após inicialização completa.
+   * Freezes the registry preventing new registrations.
+   * Useful after complete initialization.
    */
   freeze(): void {
-    this.frozen = true;
+    this._frozen = true;
   }
 
   /**
-   * Verifica se um provider está registrado.
+   * Checks if a provider is registered.
    */
   has(providerId: ProviderId): boolean {
-    return this.adapters.has(providerId);
+    return this._adapters.has(providerId);
   }
 
   /**
-   * Busca adapter por ID.
-   * Lança ProviderError normalizado se não encontrado.
+   * Gets adapter by ID.
+   * Throws normalized ProviderError if not found.
    */
   get(providerId: ProviderId): ProviderAdapter {
-    const adapter = this.adapters.get(providerId);
+    const adapter = this._adapters.get(providerId);
+
     if (!adapter) {
       throw new ProviderError({
         code: 'UNKNOWN_PROVIDER_ERROR',
@@ -94,46 +92,49 @@ export class ProviderRegistry {
         retryable: false,
       });
     }
+
     return adapter;
   }
 
   /**
-   * Busca adapter por ID (versão segura, retorna undefined).
+   * Gets adapter by ID (safe version, returns undefined).
    */
   tryGet(providerId: ProviderId): ProviderAdapter | undefined {
-    return this.adapters.get(providerId);
+    return this._adapters.get(providerId);
   }
 
   /**
-   * Lista IDs dos providers registrados.
+   * Lists IDs of registered providers.
    */
   list(): readonly ProviderId[] {
-    return Array.from(this.adapters.keys());
+    return Array.from(this._adapters.keys());
   }
 
   /**
-   * Remove um provider (apenas se explícito).
+   * Removes a provider (only if explicit).
    */
   remove(providerId: ProviderId): boolean {
-    if (this.frozen) {
+    if (this._frozen) {
       return false;
     }
-    return this.adapters.delete(providerId);
+
+    return this._adapters.delete(providerId);
   }
 
   /**
-   * Limpa todos os providers (apenas para testes).
+   * Clears all providers (tests only).
    */
   clear(): void {
-    if (this.frozen) {
+    if (this._frozen) {
       throw new ProviderRegistryError('DUPLICATE_PROVIDER', 'Registry congelado');
     }
-    this.adapters.clear();
+
+    this._adapters.clear();
   }
 }
 
 /**
- * Instância singleton do registry.
- * Exportada para uso em toda a aplicação server-side.
+ * Singleton registry instance.
+ * Exported for use across the server-side application.
  */
 export const providerRegistry = new ProviderRegistry();

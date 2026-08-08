@@ -24,11 +24,11 @@ export const KNOWN_CAPABILITIES: Record<string, ModelCapabilities> = {
 /**
  * Verifica se um modelo suporta uma capacidade específica.
  */
-export function supportsCapability(
-  model: ModelDefinition | undefined,
-  capability: keyof ModelCapabilities
-): boolean {
-  if (!model) return false;
+export function supportsCapability(model: ModelDefinition | undefined, capability: keyof ModelCapabilities): boolean {
+  if (!model) {
+    return false;
+  }
+
   return model.capabilities[capability] === true;
 }
 
@@ -38,7 +38,7 @@ export function supportsCapability(
  */
 export function requireCapabilities(
   model: ModelDefinition | undefined,
-  required: (keyof ModelCapabilities)[]
+  required: (keyof ModelCapabilities)[],
 ): asserts model is ModelDefinition {
   if (!model) {
     throw new Error('Modelo não definido');
@@ -47,9 +47,7 @@ export function requireCapabilities(
   const missing = required.filter((cap) => !model.capabilities[cap]);
 
   if (missing.length > 0) {
-    throw new Error(
-      `Modelo "${model.id}" não suporta as capacidades requeridas: ${missing.join(', ')}`
-    );
+    throw new Error(`Modelo "${model.id}" não suporta as capacidades requeridas: ${missing.join(', ')}`);
   }
 }
 
@@ -93,12 +91,12 @@ export function supportsSystemPrompt(model: ModelDefinition | undefined): boolea
  * Retorna a capacidade máxima de tokens de contexto.
  */
 export function getMaxContextTokens(model: ModelDefinition | undefined): number {
-  return model?.capabilities.maximumContextTokens ?? 0;
+  return model?.capabilities?.maximumContextTokens ?? 0;
 }
 
 /**
  * Retorna a capacidade máxima de tokens de saída.
  */
 export function getMaxOutputTokens(model: ModelDefinition | undefined): number {
-  return model?.capabilities.maximumOutputTokens ?? 0;
+  return model?.capabilities?.maximumOutputTokens ?? 0;
 }

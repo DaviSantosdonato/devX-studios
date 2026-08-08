@@ -1,244 +1,130 @@
 /**
- * Contratos de tipos para provedores de IA.
- * Definições puras sem implementação.
+ * Type contracts for AI providers.
+ * Pure definitions without implementation.
  */
 
 import type { LanguageModel } from 'ai';
 
 /**
- * Identificadores de provedores suportados.
- * Extensível para novos provedores sem quebrar existentes.
+ * Supported provider identifiers.
+ * Extensible for new providers without breaking existing ones.
  */
-export type ProviderId =
-  | 'anthropic'
-  | 'openai'
-  | 'google'
-  | 'openai-compatible'
-  | 'local';
+export type ProviderId = 'anthropic' | 'deepseek' | 'openai' | 'google' | 'openai-compatible' | 'local';
 
 /**
- * Capacidades funcionais suportadas por um modelo.
- * Reflete apenas o que o código atual utiliza ou pode vir a utilizar.
+ * Functional capabilities supported by a model.
+ * Reflects only what current code uses or may use.
  */
 export interface ModelCapabilities {
-  /** Streaming de resposta (chunks incrementais) */
+  /** Streaming response (incremental chunks) */
   streaming: boolean;
+
   /** Function calling / tool calling */
   toolCalling: boolean;
-  /** Suporte a entrada de imagens (vision) */
+
+  /** Image input support (vision) */
   vision: boolean;
-  /** Raciocínio estruturado (ex: chain-of-thought) */
+
+  /** Structured reasoning (e.g., chain-of-thought) */
   reasoning: boolean;
-  /** Suporte a system prompt dedicado */
+
+  /** Dedicated system prompt support */
   systemPrompt: boolean;
-  /** Janela de contexto máxima (tokens de entrada) */
+
+  /** Maximum context window (input tokens) */
   maximumContextTokens: number;
-  /** Saída máxima (tokens de resposta) */
+
+  /** Maximum output (response tokens) */
   maximumOutputTokens: number;
 }
 
 /**
- * Status operacional de um modelo.
+ * Operational status of a model.
  */
-export type ModelStatus =
-  | 'available'
-  | 'unavailable'
-  | 'experimental'
-  | 'deprecated';
+export type ModelStatus = 'available' | 'unavailable' | 'experimental' | 'deprecated';
 
 /**
- * Definição completa de um modelo.
+ * Complete model definition.
  */
 export interface ModelDefinition {
-  /** Identificador interno único (ex: 'claude-3-5-sonnet') */
+  /** Unique internal identifier (e.g., 'claude-3-5-sonnet') */
   id: string;
-  /** Nome público exibido na UI (ex: 'Claude 3.5 Sonnet') */
+
+  /** Public name displayed in UI (e.g., 'Claude 3.5 Sonnet') */
   name: string;
-  /** Provedor ao qual o modelo pertence */
+
+  /** Provider to which the model belongs */
   providerId: ProviderId;
-  /** Capacidades funcionais do modelo */
+
+  /** Functional capabilities of the model */
   capabilities: ModelCapabilities;
-  /** Status operacional */
+
+  /** Operational status */
   status: ModelStatus;
-  /** Variável de ambiente necessária para a chave da API (ex: 'ANTHROPIC_API_KEY') */
+
+  /** Required environment variable for API key (e.g., 'ANTHROPIC_API_KEY') */
   requiredEnvVar: string;
-  /** Identificador do modelo na API remota (ex: 'claude-3-5-sonnet-20240620') */
+
+  /** Remote model identifier in API (e.g., 'claude-3-5-sonnet-20240620') */
   remoteModelId: string;
-  /** Se este é o modelo padrão do provedor */
+
+  /** Whether this is the provider's default model */
   isDefault: boolean;
-  /** Descrição opcional para exibição */
+
+  /** Optional description for display */
   description?: string;
 }
 
 /**
- * Configuração de conexão do provedor (server-side only).
- * Nunca serializada para o cliente.
+ * Provider connection configuration (server-side only).
+ * Never serialized to client.
  */
 export interface ProviderConfiguration {
-  /** Chave da API (nunca exposta ao cliente) */
+  /** API key (never exposed to client) */
   apiKey: string;
-  /** URL base opcional para APIs compatíveis com OpenAI */
+
+  /** Optional base URL for OpenAI-compatible APIs */
   baseURL?: string;
-  /** Timeout em milissegundos para requisições */
+
+  /** Request timeout in milliseconds */
   timeout?: number;
-  /** Headers adicionais sanitizados */
+
+  /** Additional sanitized headers */
   headers?: Record<string, string>;
 }
 
 /**
- * Interface mínima que todo adapter de provedor deve implementar.
- * Não acopla a nenhum provedor específico.
+ * Minimum interface that every provider adapter must implement.
+ * Does not couple to any specific provider.
  */
 export interface ProviderAdapter {
-  /** Identificador único do provedor */
+  /** Unique provider identifier */
   readonly id: ProviderId;
-  /** Nome público do provedor */
+
+  /** Public provider name */
   readonly name: string;
-  /** Lista de modelos suportados por este adapter */
+
+  /** List of models supported by this adapter */
   readonly models: readonly ModelDefinition[];
 
   /**
-   * Valida se a configuração permite operar (ex: chave presente e válida).
+   * Validates if configuration allows operation (e.g., key present and valid).
    */
   validateConfig(config: ProviderConfiguration): Promise<boolean>;
 
   /**
-   * Cria a instância do modelo compatível com Vercel AI SDK.
-   * Retorna um LanguageModel pronto para uso com streamText.
+   * Creates model instance compatible with Vercel AI SDK.
+   * Returns a LanguageModel ready for use with streamText.
    */
   createModel(config: ProviderConfiguration, modelId: string): LanguageModel;
 
   /**
-   * Normaliza erros do provedor para ProviderError.
+   * Normalizes provider errors to ProviderError.
    */
-  normalizeError(error: unknown, modelId: string): ProviderError;
+  normalizeError(error: unknown, modelId: string): import('./errors').ProviderError;
 
   /**
-   * Retorna as capacidades de um modelo específico.
+   * Returns capabilities of a specific model.
    */
   getCapabilities(modelId: string): ModelCapabilities | undefined;
-}
-
-/**
- * Códigos de erro normalizados entre provedores.
- */
-export type ProviderErrorCode =
-  | 'INVALID_API_KEY'
-  | 'MISSING_API_KEY'
-  | 'RATE_LIMITED'
-  | 'MODEL_NOT_FOUND'
-  | 'PROVIDER_UNAVAILABLE'
-  | 'TIMEOUT'
-  | 'REQUEST_ABORTED'
-  | 'INVALID_CONFIGURATION'
-  | 'UNKNOWN_PROVIDER_ERROR';
-
-/**
- * Erro normalizado entre provedores.
- * Mensagem pública segura (sem segredos).
- */
-export class ProviderError extends Error {
-  public readonly code: ProviderErrorCode;
-  public readonly providerId: ProviderId;
-  public readonly modelId?: string;
-  public readonly statusCode?: number;
-  public readonly retryable: boolean;
-  public readonly cause?: Error;
-
-  constructor(options: {
-    code: ProviderErrorCode;
-    providerId: ProviderId;
-    modelId?: string;
-    message: string;
-    statusCode?: number;
-    retryable?: boolean;
-    cause?: Error;
-  }) {
-    super(options.message);
-    this.name = 'ProviderError';
-    this.code = options.code;
-    this.providerId = options.providerId;
-    this.modelId = options.modelId;
-    this.statusCode = options.statusCode;
-    this.retryable = options.retryable ?? false;
-    this.cause = options.cause;
-
-    // Preserva stack trace
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, ProviderError);
-    }
-  }
-
-  /**
-   * Cria erro a partir de erro desconhecido, tentando normalizar.
-   */
-  static fromUnknown(
-    error: unknown,
-    providerId: ProviderId,
-    modelId?: string
-  ): ProviderError {
-    if (error instanceof ProviderError) {
-      return error;
-    }
-
-    const err = error as Error & { status?: number; response?: { status?: number } };
-    const statusCode = err.status ?? err.response?.status;
-
-    // Mapeia status HTTP comuns
-    let code: ProviderErrorCode = 'UNKNOWN_PROVIDER_ERROR';
-    let retryable = false;
-
-    if (statusCode === 401) {
-      code = 'INVALID_API_KEY';
-    } else if (statusCode === 404) {
-      code = 'MODEL_NOT_FOUND';
-    } else if (statusCode === 429) {
-      code = 'RATE_LIMITED';
-      retryable = true;
-    } else if (statusCode && statusCode >= 500) {
-      code = 'PROVIDER_UNAVAILABLE';
-      retryable = true;
-    } else if (err.name === 'AbortError' || err.message?.includes('abort')) {
-      code = 'REQUEST_ABORTED';
-    } else if (err.message?.includes('timeout') || err.message?.includes('ETIMEDOUT')) {
-      code = 'TIMEOUT';
-      retryable = true;
-    }
-
-    return new ProviderError({
-      code,
-      providerId,
-      modelId,
-      message: err.message ?? 'Erro desconhecido do provedor',
-      statusCode,
-      retryable,
-      cause: error instanceof Error ? error : undefined,
-    });
-  }
-
-  /**
-   * Mensagem segura para exibição ao usuário (sem segredos).
-   */
-  getUserMessage(): string {
-    switch (this.code) {
-      case 'INVALID_API_KEY':
-        return 'Chave de API inválida ou expirada. Verifique sua configuração.';
-      case 'MISSING_API_KEY':
-        return 'Chave de API não configurada. Adicione a variável de ambiente necessária.';
-      case 'RATE_LIMITED':
-        return 'Limite de requisições excedido. Tente novamente em alguns instantes.';
-      case 'MODEL_NOT_FOUND':
-        return `Modelo "${this.modelId ?? 'desconhecido'}" não encontrado ou indisponível.`;
-      case 'PROVIDER_UNAVAILABLE':
-        return 'Provedor temporariamente indisponível. Tente novamente mais tarde.';
-      case 'TIMEOUT':
-        return 'A requisição expirou. Tente novamente.';
-      case 'REQUEST_ABORTED':
-        return 'A requisição foi cancelada.';
-      case 'INVALID_CONFIGURATION':
-        return 'Configuração do provedor inválida. Verifique a documentação.';
-      default:
-        return 'Ocorreu um erro ao comunicar com o provedor de IA. Tente novamente.';
-    }
-  }
 }

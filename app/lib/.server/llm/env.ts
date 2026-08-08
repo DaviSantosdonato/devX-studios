@@ -3,18 +3,19 @@
  * Acesso seguro a variáveis de ambiente sem vazamento.
  */
 
-import type { ModelDefinition } from './types';
-
 /**
  * Resultado da validação de variáveis de ambiente.
  */
 export interface EnvValidationResult {
   /** Se todas as variáveis necessárias estão presentes */
   valid: boolean;
+
   /** Variáveis ausentes */
   missing: string[];
+
   /** Variáveis presentes mas vazias */
   empty: string[];
+
   /** Avisos não bloqueantes */
   warnings: string[];
 }
@@ -27,7 +28,9 @@ export function getEnv(name: string): string | undefined {
   if (typeof process === 'undefined') {
     return undefined;
   }
+
   const value = process.env[name];
+
   return value === '' ? undefined : value;
 }
 
@@ -37,9 +40,11 @@ export function getEnv(name: string): string | undefined {
  */
 export function getRequiredEnv(name: string): string {
   const value = getEnv(name);
+
   if (value === undefined) {
     throw new Error(`Variável de ambiente obrigatória não definida: ${name}`);
   }
+
   return value;
 }
 
@@ -59,15 +64,17 @@ export function validateModelEnv(model: { requiredEnvVar: string }): EnvValidati
   const empty: string[] = [];
   const warnings: string[] = [];
 
-  const value = getEnv(model.requiredEnvVar);
-  if (value === undefined) {
+  // check raw process.env to distinguish missing from empty
+  const rawValue = typeof process !== 'undefined' ? process.env[model.requiredEnvVar] : undefined;
+
+  if (rawValue === undefined) {
     missing.push(model.requiredEnvVar);
-  } else if (value.trim() === '') {
+  } else if (rawValue === '') {
     empty.push(model.requiredEnvVar);
   }
 
-  // Avisos para configurações comuns
-  if (model.requiredEnvVar === 'ANTHROPIC_API_KEY' && value?.startsWith('sk-ant-') === false && value) {
+  // warnings for common configurations
+  if (model.requiredEnvVar === 'ANTHROPIC_API_KEY' && rawValue?.startsWith('sk-ant-') === false && rawValue) {
     warnings.push('Chave Anthropic parece ter formato inesperado (espera-se prefixo sk-ant-)');
   }
 
@@ -94,21 +101,13 @@ export function validateMultipleModelsEnv(models: Array<{ requiredEnvVar: string
     allWarnings.push(...result.warnings);
   }
 
-  // Remove duplicatas
+  // remove duplicates
   return {
     valid: allMissing.length === 0 && allEmpty.length === 0,
     missing: [...new Set(allMissing)],
     empty: [...new Set(allEmpty)],
     warnings: [...new Set(allWarnings)],
   };
-}
-
-/**
- * Sanitiza mensagem de erro para não expor segredos.
- */
-export function sanitizeErrorMessage(message: string): string {
-  // Remove possíveis chaves de API do formato sk-*
-  return message.replace(/sk-[a-zA-Z0-9_-]{20,}/g, '[REDACTED]');
 }
 
 /**
