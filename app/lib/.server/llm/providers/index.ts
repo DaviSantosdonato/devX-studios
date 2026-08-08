@@ -13,4 +13,4 @@ export * from '~/lib/.server/llm/model-registry';
 export * from './anthropic';
 export * from './openai-compatible';
 export * from './deepseek';
-export * from './nvidia';
+export * from './gemini';

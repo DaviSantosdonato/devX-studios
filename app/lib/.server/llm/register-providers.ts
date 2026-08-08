@@ -2,11 +2,11 @@ import { providerRegistry } from './provider-registry';
 import { modelRegistry } from './model-registry';
 import { anthropicAdapter, ANTHROPIC_MODELS } from './providers/anthropic';
 import { deepseekAdapter, DEEPSEEK_MODELS } from './providers/deepseek';
-import { nvidiaAdapter, NVIDIA_MODELS } from './providers/nvidia';
+import { geminiAdapter, GEMINI_MODELS } from './providers/gemini';
 
 export function registerBuiltInProviders(): void {
   // check if already registered
-  if (providerRegistry.has('anthropic') && providerRegistry.has('deepseek') && providerRegistry.has('nvidia')) {
+  if (providerRegistry.has('anthropic') && providerRegistry.has('deepseek') && providerRegistry.has('gemini')) {
     return;
   }
 
@@ -30,13 +30,13 @@ export function registerBuiltInProviders(): void {
     modelRegistry.register(model);
   }
 
-  // register NVIDIA provider
-  if (!providerRegistry.has('nvidia')) {
-    providerRegistry.register(nvidiaAdapter);
+  // register Gemini provider
+  if (!providerRegistry.has('gemini')) {
+    providerRegistry.register(geminiAdapter);
   }
 
-  // register NVIDIA models
-  for (const model of NVIDIA_MODELS) {
+  // register Gemini models
+  for (const model of GEMINI_MODELS) {
     modelRegistry.register(model);
   }
 }

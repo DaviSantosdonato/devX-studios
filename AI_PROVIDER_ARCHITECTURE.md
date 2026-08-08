@@ -242,7 +242,7 @@ export function getAllApiKeys(env: Record<string, string>): Map<ProviderId, stri
 export const MODEL_CAPABILITIES: Record<string, ModelCapabilities> = {
   'claude-3-5-sonnet': { streaming: true, tools: true, vision: true, maxTokens: 8192, contextWindow: 200000 },
   'gpt-4o': { streaming: true, tools: true, vision: true, maxTokens: 4096, contextWindow: 128000 },
-  'gemini-1.5-pro': { streaming: true, tools: true, vision: true, maxTokens: 8192, contextWindow: 1000000 },
+  'gemini-3.6-flash': { streaming: true, tools: true, vision: true, maxTokens: 65536, contextWindow: 1048576 },
   // ...
 };
 

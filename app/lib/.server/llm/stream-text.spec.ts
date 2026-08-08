@@ -6,7 +6,7 @@ import { modelRegistry } from './model-registry';
 type Env = {
   ANTHROPIC_API_KEY: string;
   DEEPSEEK_API_KEY: string;
-  NVIDIA_API_KEY: string;
+  GEMINI_API_KEY: string;
 };
 
 describe('stream-text streaming with provider headers', () => {
@@ -18,7 +18,7 @@ describe('stream-text streaming with provider headers', () => {
   const baseEnv: Env = {
     ANTHROPIC_API_KEY: 'sk-ant-test123',
     DEEPSEEK_API_KEY: 'sk-deepseek-test123',
-    NVIDIA_API_KEY: 'nvapi-test123',
+    GEMINI_API_KEY: 'gemini-test-key',
   };
 
   describe('Anthropic header propagation', () => {
@@ -63,14 +63,14 @@ describe('stream-text streaming with provider headers', () => {
     });
   });
 
-  describe('NVIDIA - no anthropic-beta header', () => {
-    it('should NOT include anthropic-beta header when streaming with NVIDIA', async () => {
+  describe('Gemini - no anthropic-beta header', () => {
+    it('should NOT include anthropic-beta header when streaming with Gemini', async () => {
       const resolved = await resolveModel({
-        modelId: 'nemotron-3-ultra-550b-a55b',
-        env: { ...baseEnv, NVIDIA_API_KEY: 'nvapi-test123' },
+        modelId: 'gemini-3.6-flash',
+        env: { ...baseEnv, GEMINI_API_KEY: 'gemini-test-key' },
       });
 
-      const streamHeaders = resolved.provider.getStreamOptions?.('nemotron-3-ultra-550b-a55b') ?? {};
+      const streamHeaders = resolved.provider.getStreamOptions?.('gemini-3.6-flash') ?? {};
       expect(streamHeaders).toEqual({});
     });
   });

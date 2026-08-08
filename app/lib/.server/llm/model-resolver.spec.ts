@@ -7,10 +7,10 @@ import { ProviderError } from './errors';
 type Env = {
   ANTHROPIC_API_KEY: string;
   DEEPSEEK_API_KEY: string;
-  NVIDIA_API_KEY: string;
+  GEMINI_API_KEY: string;
 };
 
-const PROVIDER_ENV_KEYS = ['ANTHROPIC_API_KEY', 'DEEPSEEK_API_KEY', 'NVIDIA_API_KEY'] as const;
+const PROVIDER_ENV_KEYS = ['ANTHROPIC_API_KEY', 'DEEPSEEK_API_KEY', 'GEMINI_API_KEY'] as const;
 
 describe('model-resolver', () => {
   beforeEach(() => {
@@ -29,7 +29,7 @@ describe('model-resolver', () => {
   const baseEnv: Env = {
     ANTHROPIC_API_KEY: '',
     DEEPSEEK_API_KEY: '',
-    NVIDIA_API_KEY: '',
+    GEMINI_API_KEY: '',
   };
 
   describe('bootstrap', () => {
@@ -126,29 +126,52 @@ describe('model-resolver', () => {
     });
   });
 
-  describe('NVIDIA resolution', () => {
-    it('should resolve nemotron-3-ultra-550b-a55b', async () => {
+  describe('Gemini resolution', () => {
+    it('should resolve gemini-3.6-flash', async () => {
       const result = await resolveModel({
-        modelId: 'nemotron-3-ultra-550b-a55b',
-        env: { ...baseEnv, NVIDIA_API_KEY: 'nvapi-test123' },
+        modelId: 'gemini-3.6-flash',
+        env: { ...baseEnv, GEMINI_API_KEY: 'gemini-test-key' },
       });
-      expect(result.model.id).toBe('nemotron-3-ultra-550b-a55b');
-      expect(result.provider.id).toBe('nvidia');
+      expect(result.model.id).toBe('gemini-3.6-flash');
+      expect(result.provider.id).toBe('gemini');
       expect(result.languageModel).toBeDefined();
     });
 
-    it('should use NVIDIA_API_KEY', async () => {
+    it('should use GEMINI_API_KEY', async () => {
       const result = await resolveModel({
-        modelId: 'nemotron-3-ultra-550b-a55b',
-        env: { ...baseEnv, NVIDIA_API_KEY: 'nvapi-test123' },
+        modelId: 'gemini-3.6-flash',
+        env: { ...baseEnv, GEMINI_API_KEY: 'gemini-test-key' },
       });
+      expect(result.config.apiKey).toBe('gemini-test-key');
       expect(result.languageModel).toBeDefined();
     });
 
-    it('should fail with missing NVIDIA_API_KEY', async () => {
+    it('should fail with missing GEMINI_API_KEY', async () => {
       await captureProviderError(() =>
-        resolveModel({ modelId: 'nemotron-3-ultra-550b-a55b', env: { ...baseEnv, NVIDIA_API_KEY: '' } }),
+        resolveModel({ modelId: 'gemini-3.6-flash', env: { ...baseEnv, GEMINI_API_KEY: '' } }),
       );
+    });
+
+    it('should prefer Cloudflare GEMINI_API_KEY over process.env', async () => {
+      vi.stubEnv('GEMINI_API_KEY', 'process-gemini-key');
+
+      const result = await resolveModel({
+        modelId: 'gemini-3.6-flash',
+        env: { ...baseEnv, GEMINI_API_KEY: 'cloudflare-gemini-key' },
+      });
+
+      expect(result.config.apiKey).toBe('cloudflare-gemini-key');
+    });
+
+    it('should fallback to process.env GEMINI_API_KEY', async () => {
+      vi.stubEnv('GEMINI_API_KEY', 'process-gemini-key');
+
+      const result = await resolveModel({
+        modelId: 'gemini-3.6-flash',
+        env: { ...baseEnv, GEMINI_API_KEY: '' },
+      });
+
+      expect(result.config.apiKey).toBe('process-gemini-key');
     });
   });
 
@@ -243,7 +266,7 @@ describe('model-resolver', () => {
 
   describe('env precedence', () => {
     it('should prefer Cloudflare env over process.env', async () => {
-      process.env.ANTHROPIC_API_KEY = 'process-key';
+      vi.stubEnv('ANTHROPIC_API_KEY', 'process-key');
 
       const result = await resolveModel({
         modelId: 'claude-3-5-sonnet',
@@ -254,7 +277,7 @@ describe('model-resolver', () => {
     });
 
     it('should fallback to process.env when Cloudflare env missing', async () => {
-      process.env.ANTHROPIC_API_KEY = 'process-key';
+      vi.stubEnv('ANTHROPIC_API_KEY', 'process-key');
 
       const result = await resolveModel({
         modelId: 'claude-3-5-sonnet',
@@ -272,9 +295,9 @@ describe('model-resolver', () => {
       expect(result.provider.id).toBe('anthropic');
     });
 
-    it('should NOT default to DeepSeek or NVIDIA', async () => {
+    it('should NOT default to DeepSeek or Gemini', async () => {
       const result = await resolveModel({
-        env: { ...baseEnv, ANTHROPIC_API_KEY: 'test-key', DEEPSEEK_API_KEY: 'test', NVIDIA_API_KEY: 'test' },
+        env: { ...baseEnv, ANTHROPIC_API_KEY: 'test-key', DEEPSEEK_API_KEY: 'test', GEMINI_API_KEY: 'test' },
       });
       expect(result.model.id).toBe('claude-3-5-sonnet');
     });

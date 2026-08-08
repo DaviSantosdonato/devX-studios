@@ -202,7 +202,7 @@ export function sanitizeBody(body: unknown): unknown {
 
 /**
  * Sanitizes error message removing possible secrets.
- * Removes API key patterns (sk-*, Bearer *, nvapi-*, etc.)
+ * Removes API key patterns (sk-*, Bearer tokens, labeled API keys, etc.)
  */
 export function sanitizeErrorMessage(message: string | null | undefined): string {
   if (!message) {
@@ -211,9 +211,6 @@ export function sanitizeErrorMessage(message: string | null | undefined): string
 
   // remove chaves API Anthropic (sk-ant-...)
   let sanitized = message.replace(/sk-ant-[a-zA-Z0-9_-]{20,}/g, '[REDACTED]');
-
-  // remove chaves API NVIDIA (nvapi-...)
-  sanitized = sanitized.replace(/nvapi-[a-zA-Z0-9_-]{20,}/gi, '[REDACTED]');
 
   // remove Bearer tokens - keep "Bearer " prefix
   sanitized = sanitized.replace(/Bearer\s+([a-zA-Z0-9_.-]{20,})/gi, 'Bearer [REDACTED]');

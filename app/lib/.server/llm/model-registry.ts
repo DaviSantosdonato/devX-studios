@@ -23,7 +23,7 @@ export class ModelRegistryError extends Error {
 export const KNOWN_PROVIDER_IDS: readonly ProviderId[] = [
   'anthropic',
   'deepseek',
-  'nvidia',
+  'gemini',
   'openai',
   'google',
   'openai-compatible',

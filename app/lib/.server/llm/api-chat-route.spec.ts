@@ -18,11 +18,11 @@ vi.mock('~/lib/.server/llm/stream-text', () => ({
 const testEnv: Env = {
   ANTHROPIC_API_KEY: 'sk-ant-route-test',
   DEEPSEEK_API_KEY: 'sk-deepseek-route-test',
-  NVIDIA_API_KEY: 'nvapi-route-test',
+  GEMINI_API_KEY: 'gemini-route-test',
 };
 
 const messages: Messages = [{ role: 'user', content: 'Build a counter.' }];
-const PROVIDER_ENV_KEYS = ['ANTHROPIC_API_KEY', 'DEEPSEEK_API_KEY', 'NVIDIA_API_KEY'] as const;
+const PROVIDER_ENV_KEYS = ['ANTHROPIC_API_KEY', 'DEEPSEEK_API_KEY', 'GEMINI_API_KEY'] as const;
 
 describe('api.chat model selection', () => {
   beforeEach(() => {
@@ -75,7 +75,7 @@ describe('api.chat model selection', () => {
     it.each([
       ['Anthropic', 'claude-3-5-sonnet'],
       ['DeepSeek', 'deepseek-v4-flash'],
-      ['NVIDIA', 'nemotron-3-ultra-550b-a55b'],
+      ['Gemini', 'gemini-3.6-flash'],
     ])('accepts and propagates the %s modelId', async (_provider, modelId) => {
       const response = await action(createActionArgs({ messages, modelId }));
 
@@ -119,8 +119,8 @@ describe('api.chat model selection', () => {
       ['an unknown local ID', 'does-not-exist'],
       ['a URL', 'https://evil.example/v1'],
       ['path traversal', '../../etc/passwd'],
-      ['an unregistered remote model ID', 'nvidia/nemotron-3-ultra-550b-a55b'],
-      ['a provider assignment', 'providerId=nvidia'],
+      ['an unregistered remote model ID', 'external/provider-model'],
+      ['a provider assignment', 'providerId=unregistered-provider'],
       ['a base URL assignment', 'baseURL=http://localhost:3000/v1'],
       ['an API key assignment', 'apiKey=client-secret-value'],
     ])('rejects %s through the model registry', async (_description, modelId) => {
@@ -134,13 +134,25 @@ describe('api.chat model selection', () => {
         },
       });
     });
+
+    it('rejects a removed provider model ID as unregistered', async () => {
+      const response = await action(createActionArgs({ messages, modelId: 'removed-provider-model' }));
+
+      expect(response.status).toBe(400);
+      await expect(response.json()).resolves.toEqual({
+        error: {
+          code: 'MODEL_NOT_FOUND',
+          message: 'The requested modelId is not registered.',
+        },
+      });
+    });
   });
 
   describe('infrastructure input isolation', () => {
     it.each([
-      ['providerId', { providerId: 'nvidia' }],
+      ['providerId', { providerId: 'gemini' }],
       ['baseURL', { baseURL: 'https://evil.example/v1' }],
-      ['remoteModelId', { remoteModelId: 'nvidia/nemotron-3-ultra-550b-a55b' }],
+      ['remoteModelId', { remoteModelId: 'external/provider-model' }],
       ['apiKey', { apiKey: 'client-api-key' }],
       ['headers', { headers: { Authorization: 'Bearer client-token' } }],
       ['Authorization', { Authorization: 'Bearer client-token' }],
@@ -162,13 +174,13 @@ describe('api.chat model selection', () => {
     });
 
     it('does not expose a client credential embedded in an invalid modelId', async () => {
-      const clientCredential = 'nvapi-client-secret-that-must-not-be-reflected';
+      const clientCredential = 'api-key-client-secret-that-must-not-be-reflected';
       const response = await action(createActionArgs({ messages, modelId: clientCredential }));
       const responseText = await response.text();
 
       expect(response.status).toBe(400);
       expect(responseText).not.toContain(clientCredential);
-      expect(responseText).not.toContain('nvapi-');
+      expect(responseText).not.toContain('api-key-');
     });
 
     it('does not expose credentials from unexpected stream errors', async () => {
