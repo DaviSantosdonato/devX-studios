@@ -9,7 +9,7 @@ import type { LanguageModel } from 'ai';
  * Supported provider identifiers.
  * Extensible for new providers without breaking existing ones.
  */
-export type ProviderId = 'anthropic' | 'deepseek' | 'openai' | 'google' | 'openai-compatible' | 'local';
+export type ProviderId = 'anthropic' | 'deepseek' | 'nvidia' | 'openai' | 'google' | 'openai-compatible' | 'local';
 
 /**
  * Functional capabilities supported by a model.
