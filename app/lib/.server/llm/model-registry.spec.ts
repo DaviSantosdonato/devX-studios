@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeEach } from 'vitest';
-import { ModelRegistry } from './model-registry';
+import { KNOWN_PROVIDER_IDS, ModelRegistry } from './model-registry';
 import type { ModelDefinition, ProviderId, ModelCapabilities, ModelStatus } from './types';
 
 function createMockModel(overrides: Partial<ModelDefinition> = {}): ModelDefinition {
@@ -55,6 +55,10 @@ describe('ModelRegistry', () => {
 
   beforeEach(() => {
     registry = new ModelRegistry();
+  });
+
+  it('lists exactly the current built-in provider IDs', () => {
+    expect(KNOWN_PROVIDER_IDS).toEqual(['anthropic', 'deepseek', 'gemini', 'openai']);
   });
 
   it('should register a valid model', () => {

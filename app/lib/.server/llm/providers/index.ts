@@ -14,3 +14,4 @@ export * from './anthropic';
 export * from './openai-compatible';
 export * from './deepseek';
 export * from './gemini';
+export * from './openai';

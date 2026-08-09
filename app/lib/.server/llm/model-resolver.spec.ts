@@ -8,9 +8,10 @@ type Env = {
   ANTHROPIC_API_KEY: string;
   DEEPSEEK_API_KEY: string;
   GEMINI_API_KEY: string;
+  OPENAI_API_KEY: string;
 };
 
-const PROVIDER_ENV_KEYS = ['ANTHROPIC_API_KEY', 'DEEPSEEK_API_KEY', 'GEMINI_API_KEY'] as const;
+const PROVIDER_ENV_KEYS = ['ANTHROPIC_API_KEY', 'DEEPSEEK_API_KEY', 'GEMINI_API_KEY', 'OPENAI_API_KEY'] as const;
 
 describe('model-resolver', () => {
   beforeEach(() => {
@@ -30,6 +31,7 @@ describe('model-resolver', () => {
     ANTHROPIC_API_KEY: '',
     DEEPSEEK_API_KEY: '',
     GEMINI_API_KEY: '',
+    OPENAI_API_KEY: '',
   };
 
   describe('bootstrap', () => {
@@ -175,6 +177,55 @@ describe('model-resolver', () => {
     });
   });
 
+  describe('OpenAI resolution', () => {
+    it('should resolve gpt-5.6-terra', async () => {
+      const result = await resolveModel({
+        modelId: 'gpt-5.6-terra',
+        env: { ...baseEnv, OPENAI_API_KEY: 'openai-test-key' },
+      });
+      expect(result.model.id).toBe('gpt-5.6-terra');
+      expect(result.provider.id).toBe('openai');
+      expect(result.languageModel).toBeDefined();
+    });
+
+    it('should use OPENAI_API_KEY', async () => {
+      const result = await resolveModel({
+        modelId: 'gpt-5.6-terra',
+        env: { ...baseEnv, OPENAI_API_KEY: 'openai-test-key' },
+      });
+      expect(result.config.apiKey).toBe('openai-test-key');
+      expect(result.languageModel).toBeDefined();
+    });
+
+    it('should fail with missing OPENAI_API_KEY', async () => {
+      await captureProviderError(() =>
+        resolveModel({ modelId: 'gpt-5.6-terra', env: { ...baseEnv, OPENAI_API_KEY: '' } }),
+      );
+    });
+
+    it('should prefer Cloudflare OPENAI_API_KEY over process.env', async () => {
+      vi.stubEnv('OPENAI_API_KEY', 'process-openai-key');
+
+      const result = await resolveModel({
+        modelId: 'gpt-5.6-terra',
+        env: { ...baseEnv, OPENAI_API_KEY: 'cloudflare-openai-key' },
+      });
+
+      expect(result.config.apiKey).toBe('cloudflare-openai-key');
+    });
+
+    it('should fallback to process.env OPENAI_API_KEY', async () => {
+      vi.stubEnv('OPENAI_API_KEY', 'process-openai-key');
+
+      const result = await resolveModel({
+        modelId: 'gpt-5.6-terra',
+        env: { ...baseEnv, OPENAI_API_KEY: '' },
+      });
+
+      expect(result.config.apiKey).toBe('process-openai-key');
+    });
+  });
+
   describe('invalid model', () => {
     it('should throw for unknown modelId', async () => {
       await captureProviderError(() =>
@@ -295,9 +346,15 @@ describe('model-resolver', () => {
       expect(result.provider.id).toBe('anthropic');
     });
 
-    it('should NOT default to DeepSeek or Gemini', async () => {
+    it('should NOT default to DeepSeek, Gemini, or OpenAI', async () => {
       const result = await resolveModel({
-        env: { ...baseEnv, ANTHROPIC_API_KEY: 'test-key', DEEPSEEK_API_KEY: 'test', GEMINI_API_KEY: 'test' },
+        env: {
+          ...baseEnv,
+          ANTHROPIC_API_KEY: 'test-key',
+          DEEPSEEK_API_KEY: 'test',
+          GEMINI_API_KEY: 'test',
+          OPENAI_API_KEY: 'test',
+        },
       });
       expect(result.model.id).toBe('claude-3-5-sonnet');
     });

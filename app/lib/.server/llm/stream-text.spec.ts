@@ -7,6 +7,7 @@ type Env = {
   ANTHROPIC_API_KEY: string;
   DEEPSEEK_API_KEY: string;
   GEMINI_API_KEY: string;
+  OPENAI_API_KEY: string;
 };
 
 describe('stream-text streaming with provider headers', () => {
@@ -19,6 +20,7 @@ describe('stream-text streaming with provider headers', () => {
     ANTHROPIC_API_KEY: 'sk-ant-test123',
     DEEPSEEK_API_KEY: 'sk-deepseek-test123',
     GEMINI_API_KEY: 'gemini-test-key',
+    OPENAI_API_KEY: 'openai-test-key',
   };
 
   describe('Anthropic header propagation', () => {
@@ -72,6 +74,19 @@ describe('stream-text streaming with provider headers', () => {
 
       const streamHeaders = resolved.provider.getStreamOptions?.('gemini-3.6-flash') ?? {};
       expect(streamHeaders).toEqual({});
+    });
+  });
+
+  describe('OpenAI - no provider-specific headers', () => {
+    it('should NOT include Anthropic or Gemini headers when streaming with OpenAI', async () => {
+      const resolved = await resolveModel({
+        modelId: 'gpt-5.6-terra',
+        env: { ...baseEnv, OPENAI_API_KEY: 'openai-test-key' },
+      });
+
+      const streamHeaders = resolved.provider.getStreamOptions?.('gpt-5.6-terra') ?? {};
+      expect(streamHeaders).toEqual({});
+      expect(streamHeaders).not.toHaveProperty('anthropic-beta');
     });
   });
 });

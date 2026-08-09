@@ -20,15 +20,7 @@ export class ModelRegistryError extends Error {
  * List of known ProviderIds conceptually.
  * Used for validation without requiring provider registration.
  */
-export const KNOWN_PROVIDER_IDS: readonly ProviderId[] = [
-  'anthropic',
-  'deepseek',
-  'gemini',
-  'openai',
-  'google',
-  'openai-compatible',
-  'local',
-] as const;
+export const KNOWN_PROVIDER_IDS: readonly ProviderId[] = ['anthropic', 'deepseek', 'gemini', 'openai'] as const;
 
 /**
  * ModelRegistry - Model catalog.

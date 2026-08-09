@@ -3,10 +3,16 @@ import { modelRegistry } from './model-registry';
 import { anthropicAdapter, ANTHROPIC_MODELS } from './providers/anthropic';
 import { deepseekAdapter, DEEPSEEK_MODELS } from './providers/deepseek';
 import { geminiAdapter, GEMINI_MODELS } from './providers/gemini';
+import { openaiAdapter, OPENAI_MODELS } from './providers/openai';
 
 export function registerBuiltInProviders(): void {
   // check if already registered
-  if (providerRegistry.has('anthropic') && providerRegistry.has('deepseek') && providerRegistry.has('gemini')) {
+  if (
+    providerRegistry.has('anthropic') &&
+    providerRegistry.has('deepseek') &&
+    providerRegistry.has('gemini') &&
+    providerRegistry.has('openai')
+  ) {
     return;
   }
 
@@ -37,6 +43,16 @@ export function registerBuiltInProviders(): void {
 
   // register Gemini models
   for (const model of GEMINI_MODELS) {
+    modelRegistry.register(model);
+  }
+
+  // register OpenAI provider
+  if (!providerRegistry.has('openai')) {
+    providerRegistry.register(openaiAdapter);
+  }
+
+  // register OpenAI models
+  for (const model of OPENAI_MODELS) {
     modelRegistry.register(model);
   }
 }

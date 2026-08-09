@@ -3,6 +3,17 @@
 > Documento de planejamento para suporte a múltiplos provedores de IA na DevX Studio.
 > **Não implementa** — apenas analisa e propõe arquitetura.
 
+## Estado implementado — Etapa 5G
+
+Os providers built-in registrados no backend são `anthropic`, `deepseek`, `gemini` e `openai`.
+Os modelos locais são, respectivamente, `claude-3-5-sonnet`, `deepseek-v4-flash`,
+`gemini-3.6-flash` e `gpt-5.6-terra`. Claude permanece como default global.
+
+O adapter OpenAI usa `OPENAI_API_KEY` exclusivamente no servidor e delega ao mesmo core
+OpenAI-compatible já compartilhado por DeepSeek e Gemini, com base URL estática
+`https://api.openai.com/v1`. A rota `/api/chat` permanece agnóstica a providers e recebe
+apenas o `modelId` local opcional.
+
 ---
 
 ## 1. Arquitetura Atual (Anthropic Only)

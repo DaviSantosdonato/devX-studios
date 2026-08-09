@@ -19,10 +19,11 @@ const testEnv: Env = {
   ANTHROPIC_API_KEY: 'sk-ant-route-test',
   DEEPSEEK_API_KEY: 'sk-deepseek-route-test',
   GEMINI_API_KEY: 'gemini-route-test',
+  OPENAI_API_KEY: 'openai-route-test',
 };
 
 const messages: Messages = [{ role: 'user', content: 'Build a counter.' }];
-const PROVIDER_ENV_KEYS = ['ANTHROPIC_API_KEY', 'DEEPSEEK_API_KEY', 'GEMINI_API_KEY'] as const;
+const PROVIDER_ENV_KEYS = ['ANTHROPIC_API_KEY', 'DEEPSEEK_API_KEY', 'GEMINI_API_KEY', 'OPENAI_API_KEY'] as const;
 
 describe('api.chat model selection', () => {
   beforeEach(() => {
@@ -76,6 +77,7 @@ describe('api.chat model selection', () => {
       ['Anthropic', 'claude-3-5-sonnet'],
       ['DeepSeek', 'deepseek-v4-flash'],
       ['Gemini', 'gemini-3.6-flash'],
+      ['OpenAI', 'gpt-5.6-terra'],
     ])('accepts and propagates the %s modelId', async (_provider, modelId) => {
       const response = await action(createActionArgs({ messages, modelId }));
 
@@ -92,6 +94,15 @@ describe('api.chat model selection', () => {
         testEnv,
         expect.objectContaining({ modelId: 'deepseek-v4-flash' }),
       );
+    });
+
+    it('resolves gpt-5.6-terra through the OpenAI provider', async () => {
+      const response = await action(createActionArgs({ messages, modelId: 'gpt-5.6-terra' }));
+      const resolved = await resolveModel({ modelId: 'gpt-5.6-terra', env: testEnv });
+
+      expect(response.status).toBe(200);
+      expect(resolved.provider.id).toBe('openai');
+      expect(resolved.model.remoteModelId).toBe('gpt-5.6-terra');
     });
   });
 
@@ -137,6 +148,18 @@ describe('api.chat model selection', () => {
 
     it('rejects a removed provider model ID as unregistered', async () => {
       const response = await action(createActionArgs({ messages, modelId: 'removed-provider-model' }));
+
+      expect(response.status).toBe(400);
+      await expect(response.json()).resolves.toEqual({
+        error: {
+          code: 'MODEL_NOT_FOUND',
+          message: 'The requested modelId is not registered.',
+        },
+      });
+    });
+
+    it('rejects an unregistered OpenAI model without fallback', async () => {
+      const response = await action(createActionArgs({ messages, modelId: 'gpt-does-not-exist' }));
 
       expect(response.status).toBe(400);
       await expect(response.json()).resolves.toEqual({
