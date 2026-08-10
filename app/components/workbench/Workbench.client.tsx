@@ -136,6 +136,7 @@ export const Workbench = memo(({ chatStarted, isStreaming }: WorkspaceProps) => 
                   icon="i-ph:x-circle"
                   className="-mr-1"
                   size="xl"
+                  title="Close workspace"
                   onClick={() => {
                     workbenchStore.showWorkbench.set(false);
                   }}

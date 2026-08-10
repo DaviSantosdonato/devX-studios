@@ -1,15 +1,17 @@
 .Toastify__toast {
-  --at-apply: shadow-md;
-
   background-color: var(--devx-elements-bg-depth-2);
   color: var(--devx-elements-textPrimary);
   border: 1px solid var(--devx-elements-borderColor);
+  border-radius: var(--devx-radius-lg);
+  box-shadow: var(--devx-shadow-md);
+  font-family: var(--devx-font-sans);
+  font-size: var(--devx-font-size-body-small);
 }
 
 .Toastify__close-button {
   color: var(--devx-elements-item-contentDefault);
   opacity: 1;
-  transition: none;
+  transition: color var(--devx-transition-fast) var(--devx-ease-standard);
 
   &:hover {
     color: var(--devx-elements-item-contentActive);

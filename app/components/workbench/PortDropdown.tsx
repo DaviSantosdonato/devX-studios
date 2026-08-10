@@ -48,9 +48,9 @@ export const PortDropdown = memo(
 
     return (
       <div className="relative z-port-dropdown" ref={dropdownRef}>
-        <IconButton icon="i-ph:plug" onClick={() => setIsDropdownOpen(!isDropdownOpen)} />
+        <IconButton icon="i-ph:plug" title="Select preview port" onClick={() => setIsDropdownOpen(!isDropdownOpen)} />
         {isDropdownOpen && (
-          <div className="absolute right-0 mt-2 bg-devx-elements-background-depth-2 border border-devx-elements-borderColor rounded shadow-sm min-w-[140px] dropdown-animation">
+          <div className="devx-popover absolute right-0 mt-2 min-w-[140px] dropdown-animation">
             <div className="px-4 py-2 border-b border-devx-elements-borderColor text-sm font-semibold text-devx-elements-textPrimary">
               Ports
             </div>

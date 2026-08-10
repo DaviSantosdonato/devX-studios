@@ -23,6 +23,6 @@
 
   &[data-resize-handle-state='hover']:after,
   &[data-resize-handle-state='drag']:after {
-    background-color: #8882;
+    background-color: var(--devx-border-active);
   }
 }

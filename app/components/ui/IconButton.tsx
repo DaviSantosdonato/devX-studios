@@ -28,7 +28,7 @@ type IconButtonProps = IconButtonWithoutChildrenProps | IconButtonWithChildrenPr
 export const IconButton = memo(
   ({
     icon,
-    size = 'xl',
+    size = 'lg',
     className,
     iconClassName,
     disabledClassName,
@@ -40,13 +40,15 @@ export const IconButton = memo(
     return (
       <button
         className={classNames(
-          'flex items-center text-devx-elements-item-contentDefault bg-transparent enabled:hover:text-devx-elements-item-contentActive rounded-md p-1 enabled:hover:bg-devx-elements-item-backgroundActive disabled:cursor-not-allowed',
+          'devx-icon-button',
           {
             [classNames('opacity-30', disabledClassName)]: disabled,
           },
           className,
         )}
         title={title}
+        aria-label={title}
+        type="button"
         disabled={disabled}
         onClick={(event) => {
           if (disabled) {
@@ -64,14 +66,14 @@ export const IconButton = memo(
 
 function getIconSize(size: IconSize) {
   if (size === 'sm') {
-    return 'text-sm';
+    return 'devx-icon--sm';
   } else if (size === 'md') {
-    return 'text-md';
+    return 'devx-icon--md';
   } else if (size === 'lg') {
-    return 'text-lg';
+    return 'devx-icon--lg';
   } else if (size === 'xl') {
-    return 'text-xl';
+    return 'devx-icon--xl';
   } else {
-    return 'text-2xl';
+    return 'devx-icon--xl';
   }
 }

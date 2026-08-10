@@ -299,6 +299,7 @@ function newEditorState(
         },
       }),
       getTheme(theme, settings),
+      EditorView.contentAttributes.of({ 'aria-label': 'Code editor' }),
       history(),
       keymap.of([
         ...defaultKeymap,

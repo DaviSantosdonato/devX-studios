@@ -15,7 +15,7 @@
 
   /* Active Line */
 
-  --cm-activeLineBackgroundColor: var(--devx-elements-editor-activeLineBackgroundColor, rgb(224 231 235 / 30%));
+  --cm-activeLineBackgroundColor: var(--devx-elements-editor-activeLineBackgroundColor, var(--devx-surface-hover));
 
   /* Cursor */
 
@@ -24,13 +24,19 @@
 
   /* Matching Brackets */
 
-  --cm-matching-bracket: var(--devx-elements-editor-matchingBracketBackgroundColor, rgb(50 140 130 / 0.3));
+  --cm-matching-bracket: var(--devx-elements-editor-matchingBracketBackgroundColor, var(--devx-accent-selected));
 
   /* Selection */
 
-  --cm-selection-backgroundColorFocused: var(--devx-elements-editor-selection-backgroundColor, #42b4ff);
+  --cm-selection-backgroundColorFocused: var(
+    --devx-elements-editor-selection-backgroundColor,
+    var(--devx-accent-default)
+  );
   --cm-selection-backgroundOpacityFocused: var(--devx-elements-editor-selection-backgroundOpacity, 0.3);
-  --cm-selection-backgroundColorBlured: var(--devx-elements-editor-selection-inactiveBackgroundColor, #c9e9ff);
+  --cm-selection-backgroundColorBlured: var(
+    --devx-elements-editor-selection-inactiveBackgroundColor,
+    var(--devx-accent-default)
+  );
   --cm-selection-backgroundOpacityBlured: var(--devx-elements-editor-selection-inactiveBackgroundOpacity, 0.3);
 
   /* Panels */
@@ -99,7 +105,7 @@
 
   --cm-tooltip-backgroundColorSelected: var(
     --devx-elements-editor-tooltip-backgroundColorSelected,
-    theme('colors.alpha.accent.30')
+    var(--devx-accent-selected)
   );
 
   --cm-tooltip-textColorSelected: var(
@@ -109,17 +115,17 @@
 
   --cm-tooltip-borderColor: var(--devx-elements-editor-tooltip-borderColor, var(--devx-elements-borderColor));
 
-  --cm-searchMatch-backgroundColor: var(--devx-elements-editor-searchMatch-backgroundColor, rgba(234, 92, 0, 0.33));
+  --cm-searchMatch-backgroundColor: var(--devx-elements-editor-searchMatch-backgroundColor, var(--devx-warning-subtle));
 }
 
 html[data-theme='light'] {
-  --devx-elements-editor-gutter-textColor: #237893;
+  --devx-elements-editor-gutter-textColor: var(--devx-text-muted);
   --devx-elements-editor-gutter-activeLineTextColor: var(--devx-elements-textPrimary);
   --devx-elements-editor-foldGutter-textColorHover: var(--devx-elements-textPrimary);
-  --devx-elements-editor-activeLineBackgroundColor: rgb(50 53 63 / 5%);
-  --devx-elements-editor-tooltip-backgroundColorSelected: theme('colors.alpha.accent.20');
-  --devx-elements-editor-search-button-backgroundColor: theme('colors.gray.100');
-  --devx-elements-editor-search-button-backgroundColorHover: theme('colors.alpha.gray.10');
+  --devx-elements-editor-activeLineBackgroundColor: var(--devx-surface-hover);
+  --devx-elements-editor-tooltip-backgroundColorSelected: var(--devx-accent-selected);
+  --devx-elements-editor-search-button-backgroundColor: var(--devx-surface-3);
+  --devx-elements-editor-search-button-backgroundColorHover: var(--devx-surface-hover);
 }
 
 html[data-theme='dark'] {
@@ -127,9 +133,9 @@ html[data-theme='dark'] {
   --devx-elements-editor-gutter-textColor: var(--devx-elements-textTertiary);
   --devx-elements-editor-gutter-activeLineTextColor: var(--devx-elements-textSecondary);
   --devx-elements-editor-selection-inactiveBackgroundOpacity: 0.3;
-  --devx-elements-editor-activeLineBackgroundColor: rgb(50 53 63 / 50%);
+  --devx-elements-editor-activeLineBackgroundColor: var(--devx-surface-hover);
   --devx-elements-editor-foldGutter-textColorHover: var(--devx-elements-textPrimary);
-  --devx-elements-editor-matchingBracketBackgroundColor: rgba(66, 180, 255, 0.3);
-  --devx-elements-editor-search-button-backgroundColor: theme('colors.gray.800');
-  --devx-elements-editor-search-button-backgroundColorHover: theme('colors.alpha.white.10');
+  --devx-elements-editor-matchingBracketBackgroundColor: var(--devx-accent-selected);
+  --devx-elements-editor-search-button-backgroundColor: var(--devx-surface-3);
+  --devx-elements-editor-search-button-backgroundColorHover: var(--devx-surface-hover);
 }

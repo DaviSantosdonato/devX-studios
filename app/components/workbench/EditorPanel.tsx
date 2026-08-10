@@ -220,7 +220,9 @@ export const EditorPanel = memo(
                     </button>
                   );
                 })}
-                {terminalCount < MAX_TERMINALS && <IconButton icon="i-ph:plus" size="md" onClick={addTerminal} />}
+                {terminalCount < MAX_TERMINALS && (
+                  <IconButton icon="i-ph:plus" size="md" title="New terminal" onClick={addTerminal} />
+                )}
                 <IconButton
                   className="ml-auto"
                   icon="i-ph:caret-down"

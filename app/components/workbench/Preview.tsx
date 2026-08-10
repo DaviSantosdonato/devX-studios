@@ -77,13 +77,14 @@ export const Preview = memo(() => {
         <div className="z-iframe-overlay w-full h-full absolute" onClick={() => setIsPortDropdownOpen(false)} />
       )}
       <div className="bg-devx-elements-background-depth-2 p-2 flex items-center gap-1.5">
-        <IconButton icon="i-ph:arrow-clockwise" onClick={reloadPreview} />
+        <IconButton icon="i-ph:arrow-clockwise" title="Reload preview" onClick={reloadPreview} />
         <div
           className="flex items-center gap-1 flex-grow bg-devx-elements-preview-addressBar-background border border-devx-elements-borderColor text-devx-elements-preview-addressBar-text rounded-full px-3 py-1 text-sm hover:bg-devx-elements-preview-addressBar-backgroundHover hover:focus-within:bg-devx-elements-preview-addressBar-backgroundActive focus-within:bg-devx-elements-preview-addressBar-backgroundActive
-        focus-within-border-devx-elements-borderColorActive focus-within:text-devx-elements-preview-addressBar-textActive"
+        focus-within:border-devx-elements-borderColorActive focus-within:text-devx-elements-preview-addressBar-textActive"
         >
           <input
             ref={inputRef}
+            aria-label="Preview address"
             className="w-full bg-transparent outline-none"
             type="text"
             value={url}
@@ -116,7 +117,9 @@ export const Preview = memo(() => {
         {activePreview ? (
           <iframe ref={iframeRef} className="border-none w-full h-full bg-white" src={iframeUrl} />
         ) : (
-          <div className="flex w-full h-full justify-center items-center bg-white">No preview available</div>
+          <div className="flex w-full h-full justify-center items-center bg-devx-elements-background-depth-2 text-devx-elements-textTertiary">
+            No preview available
+          </div>
         )}
       </div>
     </div>

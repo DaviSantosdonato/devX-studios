@@ -15,6 +15,7 @@ export function HeaderActionButtons({}: HeaderActionButtonsProps) {
     <div className="flex">
       <div className="flex border border-devx-elements-borderColor rounded-md overflow-hidden">
         <Button
+          ariaLabel="Toggle chat"
           active={showChat}
           disabled={!canHideChat}
           onClick={() => {
@@ -27,6 +28,7 @@ export function HeaderActionButtons({}: HeaderActionButtonsProps) {
         </Button>
         <div className="w-[1px] bg-devx-elements-borderColor" />
         <Button
+          ariaLabel="Toggle workspace"
           active={showWorkbench}
           onClick={() => {
             if (showWorkbench && !showChat) {
@@ -44,15 +46,17 @@ export function HeaderActionButtons({}: HeaderActionButtonsProps) {
 }
 
 interface ButtonProps {
+  ariaLabel: string;
   active?: boolean;
   disabled?: boolean;
   children?: any;
   onClick?: VoidFunction;
 }
 
-function Button({ active = false, disabled = false, children, onClick }: ButtonProps) {
+function Button({ ariaLabel, active = false, disabled = false, children, onClick }: ButtonProps) {
   return (
     <button
+      aria-label={ariaLabel}
       className={classNames('flex items-center p-1.5', {
         'bg-devx-elements-item-backgroundDefault hover:bg-devx-elements-item-backgroundActive text-devx-elements-textTertiary hover:text-devx-elements-textPrimary':
           !active,
@@ -60,6 +64,7 @@ function Button({ active = false, disabled = false, children, onClick }: ButtonP
         'bg-devx-elements-item-backgroundDefault text-alpha-gray-20 dark:text-alpha-white-20 cursor-not-allowed':
           disabled,
       })}
+      type="button"
       onClick={onClick}
     >
       {children}

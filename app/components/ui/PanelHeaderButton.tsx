@@ -14,13 +14,14 @@ export const PanelHeaderButton = memo(
     return (
       <button
         className={classNames(
-          'flex items-center shrink-0 gap-1.5 px-1.5 rounded-md py-0.5 text-devx-elements-item-contentDefault bg-transparent enabled:hover:text-devx-elements-item-contentActive enabled:hover:bg-devx-elements-item-backgroundActive disabled:cursor-not-allowed',
+          'devx-panel-header-button',
           {
             [classNames('opacity-30', disabledClassName)]: disabled,
           },
           className,
         )}
         disabled={disabled}
+        type="button"
         onClick={(event) => {
           if (disabled) {
             return;

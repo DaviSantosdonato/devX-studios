@@ -1,4 +1,6 @@
 @import './variables.scss';
+@import './foundation.scss';
+@import './primitives.scss';
 @import './z-index.scss';
 @import './animations.scss';
 @import './components/terminal.scss';
@@ -6,9 +8,3 @@
 @import './components/code.scss';
 @import './components/editor.scss';
 @import './components/toast.scss';
-
-html,
-body {
-  height: 100%;
-  width: 100%;
-}
