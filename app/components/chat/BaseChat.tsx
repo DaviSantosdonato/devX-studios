@@ -1,10 +1,15 @@
+import { useStore } from '@nanostores/react';
 import type { Message } from 'ai';
 import React, { type RefCallback } from 'react';
+import { Panel, PanelGroup, PanelResizeHandle, type ImperativePanelHandle } from 'react-resizable-panels';
 import { ClientOnly } from 'remix-utils/client-only';
 import { HomeStart } from '~/components/home/HomeStart';
 import { Menu } from '~/components/sidebar/Menu.client';
 import { IconButton } from '~/components/ui/IconButton';
+import { PanelHeader } from '~/components/ui/PanelHeader';
 import { Workbench } from '~/components/workbench/Workbench.client';
+import workspaceStyles from '~/components/workbench/WorkspaceShell.module.scss';
+import { workbenchStore } from '~/lib/stores/workbench';
 import { classNames } from '~/utils/classNames';
 import { Messages } from './Messages.client';
 import { SendButton } from './SendButton.client';
@@ -53,6 +58,120 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
     ref,
   ) => {
     const textareaMaxHeight = chatStarted ? 400 : 200;
+    const showWorkbench = useStore(workbenchStore.showWorkbench);
+    const chatPanelRef = React.useRef<ImperativePanelHandle>(null);
+    const workbenchPanelRef = React.useRef<ImperativePanelHandle>(null);
+
+    React.useEffect(() => {
+      const chatPanel = chatPanelRef.current;
+      const workbenchPanel = workbenchPanelRef.current;
+
+      if (!chatPanel || !workbenchPanel || !chatStarted) {
+        return;
+      }
+
+      if (showWorkbench) {
+        workbenchPanel.expand();
+      } else {
+        workbenchPanel.collapse();
+      }
+
+      if (showChat) {
+        chatPanel.expand();
+      } else {
+        chatPanel.collapse();
+      }
+    }, [chatStarted, showChat, showWorkbench]);
+
+    const chatWorkspace = (
+      <div className="h-full flex flex-col pt-3 px-3 sm:px-4">
+        <ClientOnly>
+          {() => (
+            <Messages
+              ref={messageRef}
+              className="flex flex-col w-full flex-1 max-w-chat px-2 sm:px-3 pb-5 mx-auto z-1"
+              messages={messages}
+              isStreaming={isStreaming}
+            />
+          )}
+        </ClientOnly>
+        <div className="relative sticky bottom-0 w-full max-w-chat mx-auto z-prompt">
+          <div className="shadow-sm border border-devx-elements-borderColor bg-devx-elements-prompt-background backdrop-filter backdrop-blur-[8px] rounded-lg overflow-hidden">
+            <textarea
+              ref={textareaRef}
+              className="w-full pl-4 pt-4 pr-16 focus:outline-none resize-none text-md text-devx-elements-textPrimary placeholder-devx-elements-textTertiary bg-transparent"
+              aria-label="Message DevX Studio"
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  if (event.shiftKey) {
+                    return;
+                  }
+
+                  event.preventDefault();
+                  sendMessage?.(event);
+                }
+              }}
+              value={input}
+              onChange={handleInputChange}
+              style={{
+                minHeight: TEXTAREA_MIN_HEIGHT,
+                maxHeight: textareaMaxHeight,
+              }}
+              placeholder="Como a DevX Studio pode ajudar você hoje?"
+              translate="no"
+            />
+            <ClientOnly>
+              {() => (
+                <SendButton
+                  show={input.length > 0 || isStreaming}
+                  isStreaming={isStreaming}
+                  onClick={(event) => {
+                    if (isStreaming) {
+                      handleStop?.();
+                      return;
+                    }
+
+                    sendMessage?.(event);
+                  }}
+                />
+              )}
+            </ClientOnly>
+            <div className="flex justify-between text-sm p-4 pt-2">
+              <div className="flex gap-1 items-center">
+                <IconButton
+                  title="Enhance prompt"
+                  disabled={input.length === 0 || enhancingPrompt}
+                  className={classNames({
+                    'opacity-100!': enhancingPrompt,
+                    'text-devx-elements-item-contentAccent! pr-1.5 enabled:hover:bg-devx-elements-item-backgroundAccent!':
+                      promptEnhanced,
+                  })}
+                  onClick={enhancePrompt}
+                >
+                  {enhancingPrompt ? (
+                    <>
+                      <div className="i-svg-spinners:90-ring-with-bg text-devx-elements-loader-progress text-xl" />
+                      <div className="ml-1.5">Enhancing prompt...</div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="i-ph:sparkle-duotone text-devx-elements-loader-progress text-xl" />
+                      {promptEnhanced ? <div className="ml-1.5">Prompt enhanced</div> : null}
+                    </>
+                  )}
+                </IconButton>
+              </div>
+              {input.length > 3 ? (
+                <div className="text-xs text-devx-elements-textTertiary">
+                  Use <kbd className="kdb">Shift</kbd> + <kbd className="kdb">Return</kbd> for a new line
+                </div>
+              ) : null}
+            </div>
+          </div>
+          <div className="bg-devx-elements-background-depth-1 pb-4">{/* Ghost Element */}</div>
+        </div>
+      </div>
+    );
 
     return (
       <div
@@ -63,20 +182,74 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
         )}
         data-chat-visible={showChat}
       >
-        {chatStarted ? <ClientOnly>{() => <Menu />}</ClientOnly> : null}
-        <div
-          ref={scrollRef}
-          className={classNames('flex overflow-y-auto w-full h-full', {
-            'overflow-x-hidden': !chatStarted,
-          })}
-        >
-          <div
-            className={classNames(styles.Chat, 'flex flex-col flex-grow h-full', {
-              'min-w-[var(--chat-min-width)]': chatStarted,
-              'min-w-0': !chatStarted,
-            })}
-          >
-            {!chatStarted ? (
+        {chatStarted ? (
+          <>
+            <ClientOnly>{() => <Menu />}</ClientOnly>
+            <PanelGroup direction="horizontal" className={workspaceStyles.workspaceLayout}>
+              <Panel
+                ref={chatPanelRef}
+                id="devx-chat-shell"
+                order={1}
+                defaultSize={34}
+                minSize={25}
+                collapsible
+                collapsedSize={0}
+                className={classNames(workspaceStyles.chatPanel, {
+                  [workspaceStyles.chatPanelObscured]: showWorkbench,
+                })}
+              >
+                {showChat ? (
+                  <section
+                    id="devx-chat-region"
+                    className={workspaceStyles.chatRegion}
+                    aria-labelledby="devx-chat-region-title"
+                  >
+                    <PanelHeader>
+                      <span className="i-devx:chat devx-icon--sm" aria-hidden="true" />
+                      <span id="devx-chat-region-title" className={workspaceStyles.regionTitle}>
+                        Chat
+                      </span>
+                      <span className={workspaceStyles.panelMeta}>AI workspace</span>
+                      <span className={workspaceStyles.liveStatus} data-busy={isStreaming}>
+                        <span>{isStreaming ? 'Working' : 'Ready'}</span>
+                      </span>
+                    </PanelHeader>
+                    <div ref={scrollRef} className={workspaceStyles.chatScroll}>
+                      <div className={classNames(styles.Chat, workspaceStyles.chatContent, 'flex flex-col min-h-full')}>
+                        {chatWorkspace}
+                      </div>
+                    </div>
+                  </section>
+                ) : null}
+              </Panel>
+
+              <PanelResizeHandle
+                id="devx-chat-workspace-resize"
+                className={classNames(workspaceStyles.outerResizeHandle, {
+                  [workspaceStyles.outerResizeHandleHidden]: !showChat || !showWorkbench,
+                })}
+                aria-label="Resize chat and workspace panels"
+                title="Resize chat and workspace panels"
+                disabled={!showChat || !showWorkbench}
+              />
+
+              <Panel
+                ref={workbenchPanelRef}
+                id="devx-workbench-shell"
+                order={2}
+                defaultSize={66}
+                minSize={52}
+                collapsible
+                collapsedSize={0}
+                className={workspaceStyles.workbenchPanel}
+              >
+                <ClientOnly>{() => <Workbench chatStarted={chatStarted} isStreaming={isStreaming} />}</ClientOnly>
+              </Panel>
+            </PanelGroup>
+          </>
+        ) : (
+          <div ref={scrollRef} className="flex h-full w-full overflow-y-auto overflow-x-hidden">
+            <div className={classNames(styles.Chat, 'flex min-w-0 flex-grow flex-col h-full')}>
               <HomeStart
                 textareaRef={textareaRef}
                 input={input}
@@ -89,98 +262,9 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                 onEnhance={enhancePrompt}
                 onPromptSelect={onPromptSelect}
               />
-            ) : (
-              <div className="h-full flex flex-col pt-6 px-6">
-                <ClientOnly>
-                  {() => (
-                    <Messages
-                      ref={messageRef}
-                      className="flex flex-col w-full flex-1 max-w-chat px-4 pb-6 mx-auto z-1"
-                      messages={messages}
-                      isStreaming={isStreaming}
-                    />
-                  )}
-                </ClientOnly>
-                <div className="relative sticky bottom-0 w-full max-w-chat mx-auto z-prompt">
-                  <div className="shadow-sm border border-devx-elements-borderColor bg-devx-elements-prompt-background backdrop-filter backdrop-blur-[8px] rounded-lg overflow-hidden">
-                    <textarea
-                      ref={textareaRef}
-                      className="w-full pl-4 pt-4 pr-16 focus:outline-none resize-none text-md text-devx-elements-textPrimary placeholder-devx-elements-textTertiary bg-transparent"
-                      aria-label="Message DevX Studio"
-                      onKeyDown={(event) => {
-                        if (event.key === 'Enter') {
-                          if (event.shiftKey) {
-                            return;
-                          }
-
-                          event.preventDefault();
-                          sendMessage?.(event);
-                        }
-                      }}
-                      value={input}
-                      onChange={handleInputChange}
-                      style={{
-                        minHeight: TEXTAREA_MIN_HEIGHT,
-                        maxHeight: textareaMaxHeight,
-                      }}
-                      placeholder="Como a DevX Studio pode ajudar você hoje?"
-                      translate="no"
-                    />
-                    <ClientOnly>
-                      {() => (
-                        <SendButton
-                          show={input.length > 0 || isStreaming}
-                          isStreaming={isStreaming}
-                          onClick={(event) => {
-                            if (isStreaming) {
-                              handleStop?.();
-                              return;
-                            }
-
-                            sendMessage?.(event);
-                          }}
-                        />
-                      )}
-                    </ClientOnly>
-                    <div className="flex justify-between text-sm p-4 pt-2">
-                      <div className="flex gap-1 items-center">
-                        <IconButton
-                          title="Enhance prompt"
-                          disabled={input.length === 0 || enhancingPrompt}
-                          className={classNames({
-                            'opacity-100!': enhancingPrompt,
-                            'text-devx-elements-item-contentAccent! pr-1.5 enabled:hover:bg-devx-elements-item-backgroundAccent!':
-                              promptEnhanced,
-                          })}
-                          onClick={enhancePrompt}
-                        >
-                          {enhancingPrompt ? (
-                            <>
-                              <div className="i-svg-spinners:90-ring-with-bg text-devx-elements-loader-progress text-xl" />
-                              <div className="ml-1.5">Enhancing prompt...</div>
-                            </>
-                          ) : (
-                            <>
-                              <div className="i-ph:sparkle-duotone text-devx-elements-loader-progress text-xl" />
-                              {promptEnhanced ? <div className="ml-1.5">Prompt enhanced</div> : null}
-                            </>
-                          )}
-                        </IconButton>
-                      </div>
-                      {input.length > 3 ? (
-                        <div className="text-xs text-devx-elements-textTertiary">
-                          Use <kbd className="kdb">Shift</kbd> + <kbd className="kdb">Return</kbd> for a new line
-                        </div>
-                      ) : null}
-                    </div>
-                  </div>
-                  <div className="bg-devx-elements-background-depth-1 pb-6">{/* Ghost Element */}</div>
-                </div>
-              </div>
-            )}
+            </div>
           </div>
-          <ClientOnly>{() => <Workbench chatStarted={chatStarted} isStreaming={isStreaming} />}</ClientOnly>
-        </div>
+        )}
       </div>
     );
   },

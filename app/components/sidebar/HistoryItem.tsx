@@ -1,5 +1,4 @@
 import * as Dialog from '@radix-ui/react-dialog';
-import { useEffect, useRef, useState } from 'react';
 import { type ChatHistoryItem } from '~/lib/persistence';
 
 interface HistoryItemProps {
@@ -8,57 +7,25 @@ interface HistoryItemProps {
 }
 
 export function HistoryItem({ item, onDelete }: HistoryItemProps) {
-  const [hovering, setHovering] = useState(false);
-  const hoverRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    let timeout: NodeJS.Timeout | undefined;
-
-    function mouseEnter() {
-      setHovering(true);
-
-      if (timeout) {
-        clearTimeout(timeout);
-      }
-    }
-
-    function mouseLeave() {
-      setHovering(false);
-    }
-
-    hoverRef.current?.addEventListener('mouseenter', mouseEnter);
-    hoverRef.current?.addEventListener('mouseleave', mouseLeave);
-
-    return () => {
-      hoverRef.current?.removeEventListener('mouseenter', mouseEnter);
-      hoverRef.current?.removeEventListener('mouseleave', mouseLeave);
-    };
-  }, []);
-
   return (
-    <div
-      ref={hoverRef}
-      className="group rounded-md text-devx-elements-textSecondary hover:text-devx-elements-textPrimary hover:bg-devx-elements-background-depth-3 overflow-hidden flex justify-between items-center px-2 py-1"
-    >
-      <a href={`/chat/${item.urlId}`} className="flex w-full relative truncate block">
+    <div className="group flex min-h-8 items-center rounded-md border border-transparent text-devx-elements-textSecondary hover:border-devx-elements-borderColor hover:bg-devx-elements-background-depth-3 hover:text-devx-elements-textPrimary focus-within:border-devx-elements-borderColorActive focus-within:bg-devx-elements-background-depth-3">
+      <a
+        href={`/chat/${item.urlId}`}
+        className="min-w-0 flex-1 truncate px-2 py-1.5 text-xs no-underline outline-none"
+        title={item.description}
+      >
         {item.description}
-        <div className="absolute right-0 z-1 top-0 bottom-0 bg-gradient-to-l from-devx-elements-background-depth-2 group-hover:from-devx-elements-background-depth-3 to-transparent w-10 flex justify-end group-hover:w-15 group-hover:from-45%">
-          {hovering && (
-            <div className="flex items-center p-1 text-devx-elements-textSecondary hover:text-devx-elements-item-contentDanger">
-              <Dialog.Trigger asChild>
-                <button
-                  className="i-ph:trash scale-110"
-                  onClick={(event) => {
-                    // we prevent the default so we don't trigger the anchor above
-                    event.preventDefault();
-                    onDelete?.(event);
-                  }}
-                />
-              </Dialog.Trigger>
-            </div>
-          )}
-        </div>
       </a>
+      <Dialog.Trigger asChild>
+        <button
+          type="button"
+          className="mr-1 inline-flex h-6 w-6 items-center justify-center rounded-sm text-devx-elements-textTertiary opacity-0 transition-opacity hover:bg-devx-elements-item-backgroundDanger hover:text-devx-elements-item-contentDanger group-hover:opacity-100 group-focus-within:opacity-100"
+          aria-label={`Delete ${item.description ?? 'project'}`}
+          onClick={(event) => onDelete?.(event)}
+        >
+          <span className="i-ph:trash devx-icon--sm" aria-hidden="true" />
+        </button>
+      </Dialog.Trigger>
     </div>
   );
 }

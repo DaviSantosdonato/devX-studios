@@ -1,7 +1,41 @@
 [data-resize-handle] {
   position: relative;
+  z-index: 2;
+  flex: 0 0 1px;
+  background: var(--devx-border-subtle);
+  outline: none;
+  transition: background-color var(--devx-transition-fast) var(--devx-ease-standard);
 
-  &[data-panel-group-direction='horizontal']:after {
+  &::before {
+    position: absolute;
+    z-index: 1;
+    background: transparent;
+    content: '';
+    pointer-events: none;
+    transition:
+      background-color var(--devx-transition-fast) var(--devx-ease-standard),
+      box-shadow var(--devx-transition-fast) var(--devx-ease-standard);
+  }
+
+  &[data-panel-group-direction='horizontal'] {
+    width: 1px;
+
+    &::before {
+      inset: 0;
+      width: 1px;
+    }
+  }
+
+  &[data-panel-group-direction='vertical'] {
+    height: 1px;
+
+    &::before {
+      inset: 0;
+      height: 1px;
+    }
+  }
+
+  &[data-panel-group-direction='horizontal']::after {
     content: '';
     position: absolute;
     top: 0;
@@ -11,7 +45,7 @@
     z-index: $zIndexMax;
   }
 
-  &[data-panel-group-direction='vertical']:after {
+  &[data-panel-group-direction='vertical']::after {
     content: '';
     position: absolute;
     left: 0;
@@ -21,8 +55,10 @@
     z-index: $zIndexMax;
   }
 
-  &[data-resize-handle-state='hover']:after,
-  &[data-resize-handle-state='drag']:after {
+  &[data-resize-handle-state='hover']::before,
+  &[data-resize-handle-state='drag']::before,
+  &:focus-visible::before {
     background-color: var(--devx-border-active);
+    box-shadow: 0 0 8px var(--devx-accent-glow);
   }
 }

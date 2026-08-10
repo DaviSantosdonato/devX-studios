@@ -2,68 +2,67 @@ import { useStore } from '@nanostores/react';
 import { chatStore } from '~/lib/stores/chat';
 import { workbenchStore } from '~/lib/stores/workbench';
 import { classNames } from '~/utils/classNames';
+import styles from '~/components/workbench/WorkspaceShell.module.scss';
 
-interface HeaderActionButtonsProps {}
-
-export function HeaderActionButtons({}: HeaderActionButtonsProps) {
+export function HeaderActionButtons() {
   const showWorkbench = useStore(workbenchStore.showWorkbench);
   const { showChat } = useStore(chatStore);
 
   const canHideChat = showWorkbench || !showChat;
 
   return (
-    <div className="flex">
-      <div className="flex border border-devx-elements-borderColor rounded-md overflow-hidden">
-        <Button
-          ariaLabel="Toggle chat"
-          active={showChat}
-          disabled={!canHideChat}
-          onClick={() => {
-            if (canHideChat) {
-              chatStore.setKey('showChat', !showChat);
-            }
-          }}
-        >
-          <div className="i-devx:chat text-sm" />
-        </Button>
-        <div className="w-[1px] bg-devx-elements-borderColor" />
-        <Button
-          ariaLabel="Toggle workspace"
-          active={showWorkbench}
-          onClick={() => {
-            if (showWorkbench && !showChat) {
-              chatStore.setKey('showChat', true);
-            }
+    <div className={styles.viewSwitch} role="group" aria-label="Workspace regions">
+      <Button
+        ariaLabel={showChat ? 'Hide chat panel' : 'Show chat panel'}
+        controls="devx-chat-region"
+        active={showChat}
+        disabled={!canHideChat}
+        onClick={() => {
+          if (canHideChat) {
+            chatStore.setKey('showChat', !showChat);
+          }
+        }}
+      >
+        <span className="i-devx:chat devx-icon--sm" aria-hidden="true" />
+        <span>Chat</span>
+      </Button>
+      <Button
+        ariaLabel={showWorkbench ? 'Hide workspace panel' : 'Show workspace panel'}
+        controls="devx-workbench-region"
+        active={showWorkbench}
+        onClick={() => {
+          if (showWorkbench && !showChat) {
+            chatStore.setKey('showChat', true);
+          }
 
-            workbenchStore.showWorkbench.set(!showWorkbench);
-          }}
-        >
-          <div className="i-ph:code-bold" />
-        </Button>
-      </div>
+          workbenchStore.showWorkbench.set(!showWorkbench);
+        }}
+      >
+        <span className="i-ph:code-bold devx-icon--sm" aria-hidden="true" />
+        <span>Workspace</span>
+      </Button>
     </div>
   );
 }
 
 interface ButtonProps {
   ariaLabel: string;
+  controls: string;
   active?: boolean;
   disabled?: boolean;
   children?: any;
   onClick?: VoidFunction;
 }
 
-function Button({ ariaLabel, active = false, disabled = false, children, onClick }: ButtonProps) {
+function Button({ ariaLabel, controls, active = false, disabled = false, children, onClick }: ButtonProps) {
   return (
     <button
       aria-label={ariaLabel}
-      className={classNames('flex items-center p-1.5', {
-        'bg-devx-elements-item-backgroundDefault hover:bg-devx-elements-item-backgroundActive text-devx-elements-textTertiary hover:text-devx-elements-textPrimary':
-          !active,
-        'bg-devx-elements-item-backgroundAccent text-devx-elements-item-contentAccent': active && !disabled,
-        'bg-devx-elements-item-backgroundDefault text-alpha-gray-20 dark:text-alpha-white-20 cursor-not-allowed':
-          disabled,
-      })}
+      aria-controls={controls}
+      aria-pressed={active}
+      className={classNames(styles.viewSwitchButton)}
+      data-active={active && !disabled}
+      disabled={disabled}
       type="button"
       onClick={onClick}
     >

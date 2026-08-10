@@ -2,7 +2,9 @@ import { useStore } from '@nanostores/react';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { IconButton } from '~/components/ui/IconButton';
 import { workbenchStore } from '~/lib/stores/workbench';
+import { classNames } from '~/utils/classNames';
 import { PortDropdown } from './PortDropdown';
+import styles from './WorkspaceShell.module.scss';
 
 export const Preview = memo(() => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -56,7 +58,6 @@ export const Preview = memo(() => {
     [],
   );
 
-  // when previews change, display the lowest port if user hasn't selected a preview
   useEffect(() => {
     if (previews.length > 1 && !hasSelectedPreview.current) {
       const minPortIndex = previews.reduce(findMinPortIndex, 0);
@@ -72,37 +73,43 @@ export const Preview = memo(() => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col">
-      {isPortDropdownOpen && (
-        <div className="z-iframe-overlay w-full h-full absolute" onClick={() => setIsPortDropdownOpen(false)} />
-      )}
-      <div className="bg-devx-elements-background-depth-2 p-2 flex items-center gap-1.5">
-        <IconButton icon="i-ph:arrow-clockwise" title="Reload preview" onClick={reloadPreview} />
-        <div
-          className="flex items-center gap-1 flex-grow bg-devx-elements-preview-addressBar-background border border-devx-elements-borderColor text-devx-elements-preview-addressBar-text rounded-full px-3 py-1 text-sm hover:bg-devx-elements-preview-addressBar-backgroundHover hover:focus-within:bg-devx-elements-preview-addressBar-backgroundActive focus-within:bg-devx-elements-preview-addressBar-backgroundActive
-        focus-within:border-devx-elements-borderColorActive focus-within:text-devx-elements-preview-addressBar-textActive"
-        >
+    <section className={styles.previewRegion} aria-label="Application preview">
+      {isPortDropdownOpen ? (
+        <button
+          className="z-iframe-overlay absolute inset-0 h-full w-full cursor-default bg-transparent"
+          type="button"
+          aria-label="Close preview port menu"
+          onClick={() => setIsPortDropdownOpen(false)}
+        />
+      ) : null}
+
+      <div className={styles.previewToolbar} role="toolbar" aria-label="Preview controls">
+        <IconButton
+          icon="i-ph:arrow-clockwise"
+          size="md"
+          title="Reload preview"
+          disabled={!activePreview}
+          onClick={reloadPreview}
+        />
+        <label className={styles.previewAddress}>
+          <span className={classNames('i-ph:lock-key-duotone', styles.previewAddressIcon)} aria-hidden="true" />
+          <span className="sr-only">Preview address</span>
           <input
             ref={inputRef}
             aria-label="Preview address"
-            className="w-full bg-transparent outline-none"
+            className="min-w-0 w-full bg-transparent text-xs outline-none"
             type="text"
             value={url}
-            onChange={(event) => {
-              setUrl(event.target.value);
-            }}
+            onChange={(event) => setUrl(event.target.value)}
             onKeyDown={(event) => {
               if (event.key === 'Enter' && validateUrl(url)) {
                 setIframeUrl(url);
-
-                if (inputRef.current) {
-                  inputRef.current.blur();
-                }
+                inputRef.current?.blur();
               }
             }}
           />
-        </div>
-        {previews.length > 1 && (
+        </label>
+        {previews.length > 1 ? (
           <PortDropdown
             activePreviewIndex={activePreviewIndex}
             setActivePreviewIndex={setActivePreviewIndex}
@@ -111,17 +118,27 @@ export const Preview = memo(() => {
             setIsDropdownOpen={setIsPortDropdownOpen}
             previews={previews}
           />
-        )}
+        ) : null}
       </div>
-      <div className="flex-1 border-t border-devx-elements-borderColor">
+
+      <div className={styles.previewContent}>
         {activePreview ? (
-          <iframe ref={iframeRef} className="border-none w-full h-full bg-white" src={iframeUrl} />
+          <iframe
+            ref={iframeRef}
+            className="h-full w-full border-none bg-white"
+            src={iframeUrl}
+            title="DevX application preview"
+          />
         ) : (
-          <div className="flex w-full h-full justify-center items-center bg-devx-elements-background-depth-2 text-devx-elements-textTertiary">
-            No preview available
+          <div className={styles.emptyState}>
+            <div className={styles.emptyStateContent}>
+              <span className={classNames('i-ph:browser-duotone', styles.emptyStateIcon)} aria-hidden="true" />
+              <span className={styles.emptyStateTitle}>No preview available</span>
+              <span className={styles.emptyStateText}>A running development server will appear here.</span>
+            </div>
           </div>
         )}
       </div>
-    </div>
+    </section>
   );
 });

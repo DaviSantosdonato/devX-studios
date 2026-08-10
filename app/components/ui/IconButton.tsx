@@ -1,16 +1,13 @@
-import { memo } from 'react';
+import { memo, type ButtonHTMLAttributes } from 'react';
 import { classNames } from '~/utils/classNames';
 
 type IconSize = 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
-interface BaseIconButtonProps {
+interface BaseIconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children' | 'title'> {
   size?: IconSize;
-  className?: string;
   iconClassName?: string;
   disabledClassName?: string;
   title?: string;
-  disabled?: boolean;
-  onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 }
 
 type IconButtonWithoutChildrenProps = {
@@ -36,6 +33,7 @@ export const IconButton = memo(
     title,
     onClick,
     children,
+    ...props
   }: IconButtonProps) => {
     return (
       <button
@@ -47,9 +45,10 @@ export const IconButton = memo(
           className,
         )}
         title={title}
-        aria-label={title}
+        aria-label={props['aria-label'] ?? title}
         type="button"
         disabled={disabled}
+        {...props}
         onClick={(event) => {
           if (disabled) {
             return;

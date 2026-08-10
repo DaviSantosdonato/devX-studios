@@ -5,6 +5,7 @@ import { ChatDescription } from '~/lib/persistence/ChatDescription.client';
 import { chatStore } from '~/lib/stores/chat';
 import { classNames } from '~/utils/classNames';
 import { HeaderActionButtons } from './HeaderActionButtons.client';
+import styles from '~/components/workbench/WorkspaceShell.module.scss';
 
 export function Header() {
   const chat = useStore(chatStore);
@@ -14,21 +15,39 @@ export function Header() {
   }
 
   return (
-    <header className="flex items-center shrink-0 bg-devx-elements-background-depth-1 p-5 border-b h-[var(--header-height)] border-devx-elements-borderColor">
-      <div className="flex items-center gap-2 z-logo text-devx-elements-textPrimary cursor-pointer">
-        <div className="i-ph:sidebar-simple-duotone text-xl" />
-        <a aria-label="DevX Studio home" href="/" className="text-2xl font-semibold text-accent flex items-center">
-          <span className="i-devx:logo-text?mask w-[46px] inline-block" />
-        </a>
+    <header className={styles.workspaceHeader}>
+      <button
+        className={styles.sidebarToggle}
+        type="button"
+        aria-label={chat.showSidebar ? 'Close project navigation' : 'Open project navigation'}
+        aria-controls="devx-workspace-sidebar"
+        aria-expanded={chat.showSidebar}
+        onClick={() => chatStore.setKey('showSidebar', !chat.showSidebar)}
+      >
+        <span className="i-ph:sidebar-simple-duotone devx-icon--sm" aria-hidden="true" />
+      </button>
+
+      <a aria-label="DevX Studio home" href="/" className={styles.workspaceBrand}>
+        <span className="i-devx:logo devx-icon--md" aria-hidden="true" />
+        <span className={styles.workspaceWordmark}>DevX Studio</span>
+      </a>
+
+      <span className={styles.headerDivider} aria-hidden="true" />
+
+      <div className={styles.projectIdentity} role="group" aria-label="Current project">
+        <span className={styles.projectPrefix}>DevX /</span>
+        <h1 className={styles.projectName}>
+          <ClientOnly fallback="Untitled project">{() => <ChatDescription />}</ClientOnly>
+        </h1>
       </div>
-      <span className="flex-1 px-4 truncate text-center text-devx-elements-textPrimary">
-        <ClientOnly>{() => <ChatDescription />}</ClientOnly>
-      </span>
+
       <ClientOnly>
         {() => (
-          <div className="mr-1">
+          <nav className={styles.workspaceHeaderActions} aria-label="Workspace actions">
             <HeaderActionButtons />
-          </div>
+            <span className={styles.headerDivider} aria-hidden="true" />
+            <ThemeSwitch />
+          </nav>
         )}
       </ClientOnly>
     </header>

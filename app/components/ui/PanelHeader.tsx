@@ -1,19 +1,13 @@
-import { memo } from 'react';
+import { memo, type HTMLAttributes } from 'react';
 import { classNames } from '~/utils/classNames';
 
-interface PanelHeaderProps {
-  className?: string;
+interface PanelHeaderProps extends HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
 }
 
-export const PanelHeader = memo(({ className, children }: PanelHeaderProps) => {
+export const PanelHeader = memo(({ className, children, ...props }: PanelHeaderProps) => {
   return (
-    <div
-      className={classNames(
-        'flex items-center gap-2 bg-devx-elements-background-depth-2 text-devx-elements-textSecondary border-b border-devx-elements-borderColor px-4 py-1 min-h-[34px] text-sm',
-        className,
-      )}
-    >
+    <div className={classNames('devx-panel-header', className)} {...props}>
       {children}
     </div>
   );

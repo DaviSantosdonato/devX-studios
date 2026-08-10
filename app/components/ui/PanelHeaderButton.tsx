@@ -1,16 +1,13 @@
-import { memo } from 'react';
+import { memo, type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { classNames } from '~/utils/classNames';
 
-interface PanelHeaderButtonProps {
-  className?: string;
+interface PanelHeaderButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   disabledClassName?: string;
-  disabled?: boolean;
-  children: string | JSX.Element | Array<JSX.Element | string>;
-  onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  children: ReactNode;
 }
 
 export const PanelHeaderButton = memo(
-  ({ className, disabledClassName, disabled = false, children, onClick }: PanelHeaderButtonProps) => {
+  ({ className, disabledClassName, disabled = false, children, onClick, ...props }: PanelHeaderButtonProps) => {
     return (
       <button
         className={classNames(
@@ -22,6 +19,7 @@ export const PanelHeaderButton = memo(
         )}
         disabled={disabled}
         type="button"
+        {...props}
         onClick={(event) => {
           if (disabled) {
             return;
