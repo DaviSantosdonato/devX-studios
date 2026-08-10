@@ -1,0 +1,466 @@
+.Home {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 100%;
+  flex: 1;
+  justify-content: center;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.Home::before,
+.Home::after {
+  position: absolute;
+  z-index: -1;
+  content: '';
+  pointer-events: none;
+}
+
+.Home::before {
+  inset: 0;
+  background-image: linear-gradient(to right, var(--devx-border-subtle) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--devx-border-subtle) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: linear-gradient(to bottom, rgb(0 0 0 / 54%), transparent 72%);
+  opacity: 0.32;
+}
+
+.Home::after {
+  top: -12rem;
+  left: 50%;
+  width: min(64rem, 90vw);
+  height: 34rem;
+  background: radial-gradient(circle, var(--devx-accent-subtle), transparent 68%);
+  filter: blur(12px);
+  transform: translateX(-50%);
+}
+
+.Content {
+  width: min(100%, 58rem);
+  padding: clamp(var(--devx-spacing-10), 8vh, 5rem) var(--devx-spacing-6) var(--devx-spacing-12);
+}
+
+.Hero {
+  max-width: 42rem;
+  margin: 0 auto var(--devx-spacing-6);
+  text-align: center;
+}
+
+.ProductLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--devx-spacing-2);
+  margin-bottom: var(--devx-spacing-4);
+  color: var(--devx-text-secondary);
+  font-size: var(--devx-font-size-label);
+  font-weight: var(--devx-font-weight-medium);
+  letter-spacing: 0.02em;
+}
+
+.ProductLabel > :first-child {
+  color: var(--devx-accent-default);
+}
+
+.ProductDivider {
+  width: 1px;
+  height: var(--devx-icon-size-sm);
+  background: var(--devx-border-default);
+}
+
+.ProductContext {
+  color: var(--devx-text-muted);
+}
+
+.HeroTitle {
+  margin: 0;
+}
+
+.HeroDescription {
+  margin: var(--devx-spacing-2) 0 0;
+  color: var(--devx-text-secondary);
+  font-size: var(--devx-font-size-body);
+  line-height: var(--devx-line-height-body);
+}
+
+.Composer {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: var(--devx-prompt-background);
+  border: 1px solid var(--devx-border-default);
+  border-radius: var(--devx-radius-xl);
+  box-shadow: var(--devx-shadow-md);
+  transition:
+    background-color var(--devx-transition-base) var(--devx-ease-standard),
+    border-color var(--devx-transition-base) var(--devx-ease-standard),
+    box-shadow var(--devx-transition-base) var(--devx-ease-standard),
+    transform var(--devx-transition-base) var(--devx-ease-standard);
+}
+
+.Composer:hover {
+  border-color: var(--devx-border-hover);
+}
+
+.Composer:focus-within {
+  background: var(--devx-surface-1);
+  border-color: var(--devx-border-focus);
+  box-shadow: var(--devx-shadow-md), var(--devx-shadow-focus);
+  transform: translateY(-1px);
+}
+
+.ComposerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--devx-spacing-3) var(--devx-spacing-4) 0;
+  color: var(--devx-text-muted);
+  font-size: var(--devx-font-size-caption);
+}
+
+.ComposerMode,
+.ReadyState {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--devx-spacing-1-5);
+}
+
+.ComposerMode {
+  color: var(--devx-text-secondary);
+  font-weight: var(--devx-font-weight-medium);
+}
+
+.ReadyState {
+  color: var(--devx-text-muted);
+}
+
+.ReadyDot {
+  width: var(--devx-spacing-1-5);
+  height: var(--devx-spacing-1-5);
+  background: var(--devx-success-default);
+  border-radius: var(--devx-radius-full);
+  box-shadow: 0 0 0 3px var(--devx-success-subtle);
+}
+
+.Textarea {
+  display: block;
+  width: 100%;
+  min-height: 7rem;
+  padding: var(--devx-spacing-3) var(--devx-spacing-4) var(--devx-spacing-4);
+  overflow-y: auto;
+  background: transparent;
+  border: 0;
+  color: var(--devx-text-primary);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  outline: 0;
+  resize: none;
+}
+
+.Textarea::placeholder {
+  color: var(--devx-input-placeholder);
+}
+
+.ComposerFooter {
+  display: flex;
+  min-height: 3.25rem;
+  align-items: center;
+  gap: var(--devx-spacing-2);
+  padding: var(--devx-spacing-2) var(--devx-spacing-3);
+  background: var(--devx-surface-2);
+  border-top: 1px solid var(--devx-border-subtle);
+}
+
+.EnhanceButton {
+  min-width: auto;
+  padding-inline: var(--devx-spacing-2);
+  color: var(--devx-text-secondary);
+  font-size: var(--devx-font-size-caption);
+}
+
+.EnhanceButtonActive {
+  background: var(--devx-accent-subtle);
+  color: var(--devx-accent-hover);
+}
+
+.ComposerHint {
+  margin-left: auto;
+  color: var(--devx-text-muted);
+  font-size: var(--devx-font-size-caption);
+}
+
+.ComposerHint kbd {
+  padding: var(--devx-spacing-0-5) var(--devx-spacing-1);
+  background: var(--devx-surface-3);
+  border: 1px solid var(--devx-border-subtle);
+  border-radius: var(--devx-radius-sm);
+  color: var(--devx-text-secondary);
+  font-size: inherit;
+  box-shadow: inset 0 -1px 0 var(--devx-border-default);
+}
+
+.SendButton {
+  min-width: 4.75rem;
+  flex-shrink: 0;
+}
+
+.QuickStart {
+  margin-top: var(--devx-spacing-5);
+}
+
+.SectionHeading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--devx-spacing-3);
+  margin-bottom: var(--devx-spacing-2);
+}
+
+.SectionHeading h2 {
+  margin: 0;
+  color: var(--devx-text-secondary);
+}
+
+.PromptList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--devx-spacing-2);
+}
+
+.PromptChip {
+  min-height: var(--devx-control-height-md);
+  justify-content: flex-start;
+  background: var(--devx-surface-1);
+  border-color: var(--devx-border-subtle);
+  color: var(--devx-text-secondary);
+  white-space: nowrap;
+}
+
+.PromptChip:hover {
+  border-color: var(--devx-border-hover);
+  color: var(--devx-text-primary);
+}
+
+.PromptChip > :first-child {
+  color: var(--devx-accent-hover);
+}
+
+.Recent {
+  margin-top: var(--devx-spacing-8);
+  padding-top: var(--devx-spacing-6);
+  border-top: 1px solid var(--devx-border-subtle);
+}
+
+.RecentHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--devx-spacing-4);
+  margin-bottom: var(--devx-spacing-3);
+}
+
+.RecentHeading h2,
+.RecentHeading p {
+  margin: 0;
+}
+
+.RecentHeading p {
+  margin-top: var(--devx-spacing-0-5);
+}
+
+.RecentGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--devx-spacing-2);
+}
+
+.ProjectItem {
+  display: flex;
+  min-width: 0;
+  min-height: 3.75rem;
+  align-items: center;
+  gap: var(--devx-spacing-3);
+  padding: var(--devx-spacing-2) var(--devx-spacing-3);
+  background: var(--devx-surface-1);
+  border: 1px solid var(--devx-border-subtle);
+  border-radius: var(--devx-radius-lg);
+  color: var(--devx-text-muted);
+  text-decoration: none;
+  box-shadow: var(--devx-shadow-sm);
+  transition:
+    color var(--devx-transition-fast) var(--devx-ease-standard),
+    background-color var(--devx-transition-fast) var(--devx-ease-standard),
+    border-color var(--devx-transition-fast) var(--devx-ease-standard),
+    transform var(--devx-transition-fast) var(--devx-ease-standard);
+}
+
+.ProjectItem:hover {
+  background: var(--devx-surface-2);
+  border-color: var(--devx-border-hover);
+  color: var(--devx-accent-hover);
+  transform: translateY(-1px);
+}
+
+.ProjectIcon,
+.EmptyIcon {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  background: var(--devx-accent-subtle);
+  border: 1px solid var(--devx-border-subtle);
+  border-radius: var(--devx-radius-md);
+  color: var(--devx-accent-hover);
+}
+
+.ProjectIcon {
+  width: var(--devx-control-height-lg);
+  height: var(--devx-control-height-lg);
+}
+
+.ProjectContent {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+}
+
+.ProjectTitle {
+  overflow: hidden;
+  color: var(--devx-text-primary);
+  font-size: var(--devx-font-size-body-small);
+  font-weight: var(--devx-font-weight-medium);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ProjectSkeleton {
+  min-height: 3.75rem;
+  background: linear-gradient(
+    100deg,
+    var(--devx-surface-1) 20%,
+    var(--devx-surface-hover) 36%,
+    var(--devx-surface-1) 52%
+  );
+  background-size: 200% 100%;
+  animation: devx-home-loading 1.4s var(--devx-ease-standard) infinite;
+}
+
+.EmptyState {
+  display: flex;
+  min-height: 4.75rem;
+  align-items: center;
+  justify-content: center;
+  gap: var(--devx-spacing-3);
+  padding: var(--devx-spacing-3);
+  background: var(--devx-surface-1);
+  border: 1px dashed var(--devx-border-default);
+  border-radius: var(--devx-radius-lg);
+  color: var(--devx-text-secondary);
+}
+
+.EmptyIcon {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.EmptyState strong,
+.EmptyState small {
+  display: block;
+}
+
+.EmptyState strong {
+  color: var(--devx-text-primary);
+  font-size: var(--devx-font-size-body-small);
+  font-weight: var(--devx-font-weight-medium);
+}
+
+.EmptyState small {
+  margin-top: var(--devx-spacing-0-5);
+  color: var(--devx-text-muted);
+  font-size: var(--devx-font-size-caption);
+}
+
+@keyframes devx-home-loading {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+@media (max-width: 639px) {
+  .Content {
+    padding: var(--devx-spacing-8) var(--devx-spacing-4) var(--devx-spacing-8);
+  }
+
+  .Hero {
+    margin-bottom: var(--devx-spacing-5);
+  }
+
+  .ProductContext,
+  .ProductDivider,
+  .SectionHeading > span {
+    display: none;
+  }
+
+  .Textarea {
+    min-height: 8rem;
+  }
+
+  .ComposerFooter {
+    flex-wrap: wrap;
+  }
+
+  .ComposerHint {
+    display: none;
+  }
+
+  .SendButton {
+    margin-left: auto;
+  }
+
+  .PromptList {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .PromptChip {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .PromptChip > :last-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .Recent {
+    margin-top: var(--devx-spacing-6);
+  }
+
+  .RecentGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 420px) {
+  .SendButton {
+    min-width: var(--devx-control-height-md);
+    width: var(--devx-control-height-md);
+    padding: 0;
+  }
+
+  .SendLabel {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ProjectSkeleton {
+    animation: none;
+  }
+}

@@ -1,6 +1,7 @@
 import type { Message } from 'ai';
 import React, { type RefCallback } from 'react';
 import { ClientOnly } from 'remix-utils/client-only';
+import { HomeStart } from '~/components/home/HomeStart';
 import { Menu } from '~/components/sidebar/Menu.client';
 import { IconButton } from '~/components/ui/IconButton';
 import { Workbench } from '~/components/workbench/Workbench.client';
@@ -22,18 +23,11 @@ interface BaseChatProps {
   promptEnhanced?: boolean;
   input?: string;
   handleStop?: () => void;
-  sendMessage?: (event: React.UIEvent, messageInput?: string) => void;
+  sendMessage?: (event: React.SyntheticEvent, messageInput?: string) => void;
   handleInputChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   enhancePrompt?: () => void;
+  onPromptSelect?: (prompt: string) => void;
 }
-
-const EXAMPLE_PROMPTS = [
-  { text: 'Build a todo app in React using Tailwind' },
-  { text: 'Build a simple blog using Astro' },
-  { text: 'Create a cookie consent form using Material UI' },
-  { text: 'Make a space invaders game' },
-  { text: 'How do I center a div?' },
-];
 
 const TEXTAREA_MIN_HEIGHT = 76;
 
@@ -54,10 +48,11 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
       handleInputChange,
       enhancePrompt,
       handleStop,
+      onPromptSelect,
     },
     ref,
   ) => {
-    const TEXTAREA_MAX_HEIGHT = chatStarted ? 400 : 200;
+    const textareaMaxHeight = chatStarted ? 400 : 200;
 
     return (
       <div
@@ -68,139 +63,118 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
         )}
         data-chat-visible={showChat}
       >
-        <ClientOnly>{() => <Menu />}</ClientOnly>
-        <div ref={scrollRef} className="flex overflow-y-auto w-full h-full">
-          <div className={classNames(styles.Chat, 'flex flex-col flex-grow min-w-[var(--chat-min-width)] h-full')}>
-            {!chatStarted && (
-              <div id="intro" className="mt-[26vh] max-w-chat mx-auto">
-                <h1 className="text-5xl text-center font-bold text-devx-elements-textPrimary mb-2">
-                  Onde as ideias começam
-                </h1>
-                <p className="mb-4 text-center text-devx-elements-textSecondary">
-                  Dê vida às suas ideias em segundos ou obtenha ajuda em projetos existentes.
-                </p>
-              </div>
-            )}
-            <div
-              className={classNames('pt-6 px-6', {
-                'h-full flex flex-col': chatStarted,
-              })}
-            >
-              <ClientOnly>
-                {() => {
-                  return chatStarted ? (
+        {chatStarted ? <ClientOnly>{() => <Menu />}</ClientOnly> : null}
+        <div
+          ref={scrollRef}
+          className={classNames('flex overflow-y-auto w-full h-full', {
+            'overflow-x-hidden': !chatStarted,
+          })}
+        >
+          <div
+            className={classNames(styles.Chat, 'flex flex-col flex-grow h-full', {
+              'min-w-[var(--chat-min-width)]': chatStarted,
+              'min-w-0': !chatStarted,
+            })}
+          >
+            {!chatStarted ? (
+              <HomeStart
+                textareaRef={textareaRef}
+                input={input}
+                isStreaming={isStreaming}
+                enhancingPrompt={enhancingPrompt}
+                promptEnhanced={promptEnhanced}
+                onInputChange={handleInputChange}
+                onSubmit={sendMessage}
+                onStop={handleStop}
+                onEnhance={enhancePrompt}
+                onPromptSelect={onPromptSelect}
+              />
+            ) : (
+              <div className="h-full flex flex-col pt-6 px-6">
+                <ClientOnly>
+                  {() => (
                     <Messages
                       ref={messageRef}
                       className="flex flex-col w-full flex-1 max-w-chat px-4 pb-6 mx-auto z-1"
                       messages={messages}
                       isStreaming={isStreaming}
                     />
-                  ) : null;
-                }}
-              </ClientOnly>
-              <div
-                className={classNames('relative w-full max-w-chat mx-auto z-prompt', {
-                  'sticky bottom-0': chatStarted,
-                })}
-              >
-                <div
-                  className={classNames(
-                    'shadow-sm border border-devx-elements-borderColor bg-devx-elements-prompt-background backdrop-filter backdrop-blur-[8px] rounded-lg overflow-hidden',
                   )}
-                >
-                  <textarea
-                    ref={textareaRef}
-                    className={`w-full pl-4 pt-4 pr-16 focus:outline-none resize-none text-md text-devx-elements-textPrimary placeholder-devx-elements-textTertiary bg-transparent`}
-                    onKeyDown={(event) => {
-                      if (event.key === 'Enter') {
-                        if (event.shiftKey) {
-                          return;
-                        }
-
-                        event.preventDefault();
-
-                        sendMessage?.(event);
-                      }
-                    }}
-                    value={input}
-                    onChange={(event) => {
-                      handleInputChange?.(event);
-                    }}
-                    style={{
-                      minHeight: TEXTAREA_MIN_HEIGHT,
-                      maxHeight: TEXTAREA_MAX_HEIGHT,
-                    }}
-                    placeholder="Como a DevX Studio pode ajudar você hoje?"
-                    translate="no"
-                  />
-                  <ClientOnly>
-                    {() => (
-                      <SendButton
-                        show={input.length > 0 || isStreaming}
-                        isStreaming={isStreaming}
-                        onClick={(event) => {
-                          if (isStreaming) {
-                            handleStop?.();
+                </ClientOnly>
+                <div className="relative sticky bottom-0 w-full max-w-chat mx-auto z-prompt">
+                  <div className="shadow-sm border border-devx-elements-borderColor bg-devx-elements-prompt-background backdrop-filter backdrop-blur-[8px] rounded-lg overflow-hidden">
+                    <textarea
+                      ref={textareaRef}
+                      className="w-full pl-4 pt-4 pr-16 focus:outline-none resize-none text-md text-devx-elements-textPrimary placeholder-devx-elements-textTertiary bg-transparent"
+                      aria-label="Message DevX Studio"
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter') {
+                          if (event.shiftKey) {
                             return;
                           }
 
+                          event.preventDefault();
                           sendMessage?.(event);
-                        }}
-                      />
-                    )}
-                  </ClientOnly>
-                  <div className="flex justify-between text-sm p-4 pt-2">
-                    <div className="flex gap-1 items-center">
-                      <IconButton
-                        title="Enhance prompt"
-                        disabled={input.length === 0 || enhancingPrompt}
-                        className={classNames({
-                          'opacity-100!': enhancingPrompt,
-                          'text-devx-elements-item-contentAccent! pr-1.5 enabled:hover:bg-devx-elements-item-backgroundAccent!':
-                            promptEnhanced,
-                        })}
-                        onClick={() => enhancePrompt?.()}
-                      >
-                        {enhancingPrompt ? (
-                          <>
-                            <div className="i-svg-spinners:90-ring-with-bg text-devx-elements-loader-progress text-xl"></div>
-                            <div className="ml-1.5">Enhancing prompt...</div>
-                          </>
-                        ) : (
-                          <>
-                            <div className="i-ph:sparkle-duotone text-devx-elements-loader-progress text-xl"></div>
-                            {promptEnhanced && <div className="ml-1.5">Prompt enhanced</div>}
-                          </>
-                        )}
-                      </IconButton>
-                    </div>
-                    {input.length > 3 ? (
-                      <div className="text-xs text-devx-elements-textTertiary">
-                        Use <kbd className="kdb">Shift</kbd> + <kbd className="kdb">Return</kbd> for a new line
+                        }
+                      }}
+                      value={input}
+                      onChange={handleInputChange}
+                      style={{
+                        minHeight: TEXTAREA_MIN_HEIGHT,
+                        maxHeight: textareaMaxHeight,
+                      }}
+                      placeholder="Como a DevX Studio pode ajudar você hoje?"
+                      translate="no"
+                    />
+                    <ClientOnly>
+                      {() => (
+                        <SendButton
+                          show={input.length > 0 || isStreaming}
+                          isStreaming={isStreaming}
+                          onClick={(event) => {
+                            if (isStreaming) {
+                              handleStop?.();
+                              return;
+                            }
+
+                            sendMessage?.(event);
+                          }}
+                        />
+                      )}
+                    </ClientOnly>
+                    <div className="flex justify-between text-sm p-4 pt-2">
+                      <div className="flex gap-1 items-center">
+                        <IconButton
+                          title="Enhance prompt"
+                          disabled={input.length === 0 || enhancingPrompt}
+                          className={classNames({
+                            'opacity-100!': enhancingPrompt,
+                            'text-devx-elements-item-contentAccent! pr-1.5 enabled:hover:bg-devx-elements-item-backgroundAccent!':
+                              promptEnhanced,
+                          })}
+                          onClick={enhancePrompt}
+                        >
+                          {enhancingPrompt ? (
+                            <>
+                              <div className="i-svg-spinners:90-ring-with-bg text-devx-elements-loader-progress text-xl" />
+                              <div className="ml-1.5">Enhancing prompt...</div>
+                            </>
+                          ) : (
+                            <>
+                              <div className="i-ph:sparkle-duotone text-devx-elements-loader-progress text-xl" />
+                              {promptEnhanced ? <div className="ml-1.5">Prompt enhanced</div> : null}
+                            </>
+                          )}
+                        </IconButton>
                       </div>
-                    ) : null}
+                      {input.length > 3 ? (
+                        <div className="text-xs text-devx-elements-textTertiary">
+                          Use <kbd className="kdb">Shift</kbd> + <kbd className="kdb">Return</kbd> for a new line
+                        </div>
+                      ) : null}
+                    </div>
                   </div>
-                </div>
-                <div className="bg-devx-elements-background-depth-1 pb-6">{/* Ghost Element */}</div>
-              </div>
-            </div>
-            {!chatStarted && (
-              <div id="examples" className="relative w-full max-w-xl mx-auto mt-8 flex justify-center">
-                <div className="flex flex-col space-y-2 [mask-image:linear-gradient(to_bottom,black_0%,transparent_180%)] hover:[mask-image:none]">
-                  {EXAMPLE_PROMPTS.map((examplePrompt, index) => {
-                    return (
-                      <button
-                        key={index}
-                        onClick={(event) => {
-                          sendMessage?.(event, examplePrompt.text);
-                        }}
-                        className="group flex items-center w-full gap-2 justify-center bg-transparent text-devx-elements-textTertiary hover:text-devx-elements-textPrimary transition-theme"
-                      >
-                        {examplePrompt.text}
-                        <div className="i-ph:arrow-bend-down-left" />
-                      </button>
-                    );
-                  })}
+                  <div className="bg-devx-elements-background-depth-1 pb-6">{/* Ghost Element */}</div>
                 </div>
               </div>
             )}

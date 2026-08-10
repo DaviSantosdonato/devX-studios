@@ -146,7 +146,7 @@ export const ChatImpl = memo(({ initialMessages, storeMessageHistory }: ChatProp
     setChatStarted(true);
   };
 
-  const sendMessage = async (_event: React.UIEvent, messageInput?: string) => {
+  const sendMessage = async (_event: React.SyntheticEvent, messageInput?: string) => {
     const _input = messageInput || input;
 
     if (_input.length === 0 || isLoading) {
@@ -226,6 +226,13 @@ export const ChatImpl = memo(({ initialMessages, storeMessageHistory }: ChatProp
       enhancePrompt={() => {
         enhancePrompt(input, (input) => {
           setInput(input);
+          scrollTextArea();
+        });
+      }}
+      onPromptSelect={(prompt) => {
+        setInput(prompt);
+        requestAnimationFrame(() => {
+          textareaRef.current?.focus();
           scrollTextArea();
         });
       }}

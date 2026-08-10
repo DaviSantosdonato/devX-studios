@@ -6,8 +6,11 @@ import { Header } from '~/components/header/Header';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'DevX Studio' },
-    { name: 'description', content: 'Crie, edite e execute aplicações full-stack com inteligência artificial diretamente no navegador.' },
+    { title: 'DevX Studio — Build software with AI' },
+    {
+      name: 'description',
+      content: 'Describe your idea and build working full-stack software with AI in DevX Studio.',
+    },
   ];
 };
 
@@ -17,7 +20,9 @@ export default function Index() {
   return (
     <div className="flex flex-col h-full w-full">
       <Header />
-      <ClientOnly fallback={<BaseChat />}>{() => <Chat />}</ClientOnly>
+      <main className="flex min-h-0 flex-1" aria-label="DevX Studio workspace">
+        <ClientOnly fallback={<BaseChat />}>{() => <Chat />}</ClientOnly>
+      </main>
     </div>
   );
 }
