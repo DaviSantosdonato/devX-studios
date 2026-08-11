@@ -1,0 +1,80 @@
+.SendButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--devx-spacing-1-5);
+  min-width: var(--devx-control-height-md);
+  height: var(--devx-control-height-md);
+  padding: 0 var(--devx-spacing-3);
+  background: var(--devx-button-primary-background);
+  border: 0;
+  border-radius: var(--devx-radius-md);
+  color: var(--devx-button-primary-text);
+  font-size: var(--devx-font-size-caption);
+  font-weight: var(--devx-font-weight-semibold);
+  white-space: nowrap;
+  transition:
+    background-color var(--devx-transition-fast) var(--devx-ease-standard),
+    box-shadow var(--devx-transition-fast) var(--devx-ease-standard),
+    transform var(--devx-transition-fast) var(--devx-ease-standard);
+}
+
+.SendButton:hover:not(:disabled) {
+  background: var(--devx-button-primary-backgroundHover);
+  transform: translateY(-1px);
+}
+
+.SendButton:active:not(:disabled) {
+  background: var(--devx-button-primary-backgroundActive);
+  transform: translateY(0);
+}
+
+.SendButton:focus-visible {
+  outline: 0;
+  box-shadow: var(--devx-shadow-focus);
+}
+
+.SendButton:disabled {
+  background: var(--devx-button-disabled-background);
+  color: var(--devx-button-disabled-text);
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Stop state - uses danger tokens */
+.SendButton[data-streaming='true'] {
+  background: var(--devx-button-danger-background);
+  color: var(--devx-button-danger-text);
+}
+
+.SendButton[data-streaming='true']:hover:not(:disabled) {
+  background: var(--devx-button-danger-backgroundHover);
+}
+
+.SendButton[data-streaming='true']:active:not(:disabled) {
+  background: var(--devx-button-danger-backgroundActive);
+}
+
+.SendButtonIcon {
+  display: inline-flex;
+  width: 1.125rem;
+  height: 1.125rem;
+  flex-shrink: 0;
+}
+
+.SendButtonLabel {
+  display: none;
+}
+
+@media (min-width: 480px) {
+  .SendButtonLabel {
+    display: inline;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .SendButton {
+    transition: none;
+  }
+}

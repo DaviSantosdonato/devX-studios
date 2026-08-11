@@ -1,4 +1,4 @@
-$font-mono: ui-monospace, 'Fira Code', Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+$font-mono: ui-monospace, 'Cascadia Code', 'Roboto Mono', Menlo, Monaco, Consolas, monospace;
 $code-font-size: 13px;
 
 @mixin not-inside-actions {
@@ -10,110 +10,126 @@ $code-font-size: 13px;
 .MarkdownContent {
   line-height: 1.6;
   color: var(--devx-elements-textPrimary);
+  font-size: var(--devx-font-size-body);
+  max-width: 100%;
 
   > *:not(:last-child) {
     margin-block-end: 16px;
   }
 
   :global(.artifact) {
-    margin: 1.5em 0;
+    margin: 1.25em 0;
   }
 
   :is(h1, h2, h3, h4, h5, h6) {
     @include not-inside-actions {
-      margin-block-start: 24px;
-      margin-block-end: 16px;
+      margin-block-start: 1.5em;
+      margin-block-end: 0.5em;
       font-weight: 600;
-      line-height: 1.25;
+      line-height: 1.3;
       color: var(--devx-elements-textPrimary);
     }
   }
 
   h1 {
-    font-size: 2em;
+    font-size: 1.5rem;
     border-bottom: 1px solid var(--devx-elements-borderColor);
     padding-bottom: 0.3em;
   }
 
   h2 {
-    font-size: 1.5em;
+    font-size: 1.25rem;
     border-bottom: 1px solid var(--devx-elements-borderColor);
     padding-bottom: 0.3em;
   }
 
   h3 {
-    font-size: 1.25em;
+    font-size: 1.125rem;
   }
 
   h4 {
-    font-size: 1em;
+    font-size: 1rem;
   }
 
   h5 {
-    font-size: 0.875em;
+    font-size: 0.875rem;
   }
 
   h6 {
-    font-size: 0.85em;
-    color: #6a737d;
+    font-size: 0.8125rem;
+    color: var(--devx-elements-textTertiary);
   }
 
   p {
     white-space: pre-wrap;
-
-    &:not(:last-of-type) {
-      margin-block-start: 0;
-      margin-block-end: 16px;
-    }
+    margin-block-start: 0;
+    margin-block-end: 1rem;
+    line-height: 1.65;
   }
 
   a {
     color: var(--devx-elements-messages-linkColor);
     text-decoration: none;
     cursor: pointer;
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--devx-transition-fast) var(--devx-ease-standard);
 
     &:hover {
-      text-decoration: underline;
+      border-bottom-color: var(--devx-elements-messages-linkColor);
     }
   }
 
   :not(pre) > code {
     font-family: $font-mono;
     font-size: $code-font-size;
+    line-height: 1.5;
 
     @include not-inside-actions {
-      border-radius: 6px;
-      padding: 0.2em 0.4em;
+      border-radius: 4px;
+      padding: 0.15em 0.4em;
       background-color: var(--devx-elements-messages-inlineCode-background);
       color: var(--devx-elements-messages-inlineCode-text);
     }
   }
 
   pre {
-    padding: 20px 16px;
-    border-radius: 6px;
+    @include not-inside-actions {
+      margin: 1em 0;
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--devx-elements-code-background);
+      border: 1px solid var(--devx-elements-borderColor);
+    }
   }
 
   pre:has(> code) {
-    font-family: $font-mono;
-    font-size: $code-font-size;
-    background: transparent;
-    overflow-x: auto;
-    min-width: 0;
+    @include not-inside-actions {
+      font-family: $font-mono;
+      font-size: $code-font-size;
+      line-height: 1.55;
+      background: transparent;
+      overflow-x: auto;
+      min-width: 0;
+      padding: 0;
+    }
   }
 
   blockquote {
-    margin: 0;
-    padding: 0 1em;
-    color: var(--devx-elements-textTertiary);
-    border-left: 0.25em solid var(--devx-elements-borderColor);
+    @include not-inside-actions {
+      margin: 1em 0;
+      padding: 0.5em 1em;
+      color: var(--devx-elements-textSecondary);
+      border-left: 3px solid var(--devx-accent-default);
+      background: var(--devx-accent-subtle);
+      border-radius: 0 var(--devx-radius-md) var(--devx-radius-md) 0;
+    }
   }
 
   :is(ul, ol) {
     @include not-inside-actions {
-      padding-left: 2em;
-      margin-block-start: 0;
-      margin-block-end: 16px;
+      padding-left: 1.5em;
+      margin-block-start: 0.5em;
+      margin-block-end: 1em;
     }
   }
 
@@ -131,41 +147,59 @@ $code-font-size: 13px;
 
   li {
     @include not-inside-actions {
-      & + li {
-        margin-block-start: 8px;
-      }
+      line-height: 1.65;
+      margin-block-start: 0.25em;
 
       > *:not(:last-child) {
-        margin-block-end: 16px;
+        margin-block-end: 0.75em;
       }
     }
+  }
+
+  li::marker {
+    color: var(--devx-elements-textTertiary);
   }
 
   img {
     max-width: 100%;
-    box-sizing: border-box;
+    height: auto;
+    border-radius: var(--devx-radius-md);
+    box-shadow: var(--devx-shadow-sm);
   }
 
   hr {
-    height: 0.25em;
-    padding: 0;
-    margin: 24px 0;
-    background-color: var(--devx-elements-borderColor);
-    border: 0;
+    @include not-inside-actions {
+      height: 1px;
+      padding: 0;
+      margin: 1.5em 0;
+      background-color: var(--devx-elements-borderColor);
+      border: 0;
+    }
   }
 
   table {
-    border-collapse: collapse;
-    width: 100%;
-    margin-block-end: 16px;
+    @include not-inside-actions {
+      border-collapse: collapse;
+      width: 100%;
+      margin-block-end: 1em;
+      font-size: var(--devx-font-size-body-small);
+      overflow-x: auto;
 
-    :is(th, td) {
-      padding: 6px 13px;
-      border: 1px solid #dfe2e5;
-    }
+      :is(th, td) {
+        padding: 0.5em 0.75em;
+        border: 1px solid var(--devx-elements-borderColor);
+        text-align: left;
+      }
 
-    tr:nth-child(2n) {
-      background-color: #f6f8fa;
+      th {
+        background: var(--devx-elements-bg-depth-3);
+        font-weight: 600;
+        color: var(--devx-elements-textPrimary);
+      }
+
+      tr:nth-child(2n) td {
+        background-color: var(--devx-elements-bg-depth-2);
+      }
     }
   }
 }

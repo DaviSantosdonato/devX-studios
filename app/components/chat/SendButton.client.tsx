@@ -1,31 +1,36 @@
-import { AnimatePresence, cubicBezier, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+
+import styles from './SendButton.client.module.scss';
 
 interface SendButtonProps {
   show: boolean;
   isStreaming?: boolean;
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  disabled?: boolean;
 }
 
-const customEasingFn = cubicBezier(0.4, 0, 0.2, 1);
-
-export function SendButton({ show, isStreaming, onClick }: SendButtonProps) {
+export function SendButton({ show, isStreaming, onClick, disabled = false }: SendButtonProps) {
   return (
     <AnimatePresence>
       {show ? (
         <motion.button
-          className="absolute flex justify-center items-center top-[18px] right-[22px] p-1 bg-accent-500 hover:brightness-94 color-white rounded-md w-[34px] h-[34px] transition-theme"
-          transition={{ ease: customEasingFn, duration: 0.17 }}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 10 }}
+          className={styles.SendButton}
+          data-streaming={isStreaming}
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          transition={{ duration: 0.15, ease: [0.4, 0, 0.2, 1] }}
           onClick={(event) => {
             event.preventDefault();
             onClick?.(event);
           }}
+          disabled={disabled}
+          aria-label={isStreaming ? 'Stop generation' : 'Send prompt'}
         >
-          <div className="text-lg">
-            {!isStreaming ? <div className="i-ph:arrow-right"></div> : <div className="i-ph:stop-circle-bold"></div>}
-          </div>
+          <span className={styles.SendButtonIcon} aria-hidden="true">
+            {!isStreaming ? <span className="i-ph:arrow-up-right-bold" /> : <span className="i-ph:stop-circle-bold" />}
+          </span>
+          <span className={styles.SendButtonLabel}>{isStreaming ? 'Stop' : 'Send'}</span>
         </motion.button>
       ) : null}
     </AnimatePresence>

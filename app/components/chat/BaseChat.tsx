@@ -84,22 +84,22 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
     }, [chatStarted, showChat, showWorkbench]);
 
     const chatWorkspace = (
-      <div className="h-full flex flex-col pt-3 px-3 sm:px-4">
+      <div className="h-full flex flex-col">
         <ClientOnly>
           {() => (
             <Messages
               ref={messageRef}
-              className="flex flex-col w-full flex-1 max-w-chat px-2 sm:px-3 pb-5 mx-auto z-1"
+              className="flex flex-col w-full flex-1"
               messages={messages}
               isStreaming={isStreaming}
             />
           )}
         </ClientOnly>
-        <div className="relative sticky bottom-0 w-full max-w-chat mx-auto z-prompt">
-          <div className="shadow-sm border border-devx-elements-borderColor bg-devx-elements-prompt-background backdrop-filter backdrop-blur-[8px] rounded-lg overflow-hidden">
+        <div className={classNames(styles.Composer, 'relative sticky bottom-0 w-full z-prompt')}>
+          <div className={styles.ComposerInner}>
             <textarea
               ref={textareaRef}
-              className="w-full pl-4 pt-4 pr-16 focus:outline-none resize-none text-md text-devx-elements-textPrimary placeholder-devx-elements-textTertiary bg-transparent"
+              className={styles.ComposerTextarea}
               aria-label="Message DevX Studio"
               onKeyDown={(event) => {
                 if (event.key === 'Enter') {
@@ -120,55 +120,53 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
               placeholder="Como a DevX Studio pode ajudar você hoje?"
               translate="no"
             />
-            <ClientOnly>
-              {() => (
-                <SendButton
-                  show={input.length > 0 || isStreaming}
-                  isStreaming={isStreaming}
-                  onClick={(event) => {
-                    if (isStreaming) {
-                      handleStop?.();
-                      return;
-                    }
-
-                    sendMessage?.(event);
-                  }}
-                />
-              )}
-            </ClientOnly>
-            <div className="flex justify-between text-sm p-4 pt-2">
-              <div className="flex gap-1 items-center">
+            <div className={styles.ComposerFooter}>
+              <div className={styles.ComposerActions}>
                 <IconButton
                   title="Enhance prompt"
                   disabled={input.length === 0 || enhancingPrompt}
-                  className={classNames({
-                    'opacity-100!': enhancingPrompt,
-                    'text-devx-elements-item-contentAccent! pr-1.5 enabled:hover:bg-devx-elements-item-backgroundAccent!':
-                      promptEnhanced,
+                  className={classNames(styles.EnhanceButton, {
+                    [styles.EnhanceButtonActive]: promptEnhanced,
                   })}
                   onClick={enhancePrompt}
                 >
                   {enhancingPrompt ? (
                     <>
-                      <div className="i-svg-spinners:90-ring-with-bg text-devx-elements-loader-progress text-xl" />
-                      <div className="ml-1.5">Enhancing prompt...</div>
+                      <span className="i-svg-spinners:90-ring-with-bg devx-icon--sm" aria-hidden="true" />
+                      <span>Enhancing...</span>
                     </>
                   ) : (
                     <>
-                      <div className="i-ph:sparkle-duotone text-devx-elements-loader-progress text-xl" />
-                      {promptEnhanced ? <div className="ml-1.5">Prompt enhanced</div> : null}
+                      <span className="i-ph:sparkle-duotone devx-icon--sm" aria-hidden="true" />
+                      <span>{promptEnhanced ? 'Prompt enhanced' : 'Enhance prompt'}</span>
                     </>
                   )}
                 </IconButton>
               </div>
-              {input.length > 3 ? (
-                <div className="text-xs text-devx-elements-textTertiary">
-                  Use <kbd className="kdb">Shift</kbd> + <kbd className="kdb">Return</kbd> for a new line
-                </div>
-              ) : null}
+              {input.length > 3 && (
+                <span id="composer-hint" className={styles.ComposerHint}>
+                  <kbd>Shift</kbd> + <kbd>Enter</kbd> for a new line
+                </span>
+              )}
+              <ClientOnly>
+                {() => (
+                  <SendButton
+                    show={input.length > 0 || isStreaming}
+                    isStreaming={isStreaming}
+                    disabled={input.length === 0 && !isStreaming}
+                    onClick={(event) => {
+                      if (isStreaming) {
+                        handleStop?.();
+                        return;
+                      }
+
+                      sendMessage?.(event);
+                    }}
+                  />
+                )}
+              </ClientOnly>
             </div>
           </div>
-          <div className="bg-devx-elements-background-depth-1 pb-4">{/* Ghost Element */}</div>
         </div>
       </div>
     );
@@ -214,7 +212,7 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                         <span>{isStreaming ? 'Working' : 'Ready'}</span>
                       </span>
                     </PanelHeader>
-                    <div ref={scrollRef} className={workspaceStyles.chatScroll}>
+                    <div ref={scrollRef} className={classNames(workspaceStyles.chatScroll, styles.MessageList)}>
                       <div className={classNames(styles.Chat, workspaceStyles.chatContent, 'flex flex-col min-h-full')}>
                         {chatWorkspace}
                       </div>

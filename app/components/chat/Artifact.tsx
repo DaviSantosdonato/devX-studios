@@ -46,52 +46,118 @@ export const Artifact = memo(({ messageId }: ArtifactProps) => {
     if (actions.length && !showActions && !userToggledActions.current) {
       setShowActions(true);
     }
-  }, [actions]);
+  }, [actions, showActions]);
+
+  const runningActions = actions.filter((a) => a.status === 'running').length;
+  const pendingActions = actions.filter((a) => a.status === 'pending').length;
+  const completedActions = actions.filter((a) => a.status === 'complete').length;
+  const failedActions = actions.filter((a) => a.status === 'failed' || a.status === 'aborted').length;
+
+  const getArtifactStatus = () => {
+    if (failedActions > 0) {
+      return { label: 'Error', variant: 'error' as const };
+    }
+
+    if (runningActions > 0) {
+      return { label: 'Running', variant: 'running' as const };
+    }
+
+    if (pendingActions > 0) {
+      return { label: 'Pending', variant: 'pending' as const };
+    }
+
+    if (completedActions > 0) {
+      return { label: 'Complete', variant: 'complete' as const };
+    }
+
+    return { label: 'Idle', variant: 'idle' as const };
+  };
+
+  const artifactStatus = getArtifactStatus();
 
   return (
-    <div className="artifact border border-devx-elements-borderColor flex flex-col overflow-hidden rounded-lg w-full transition-border duration-150">
-      <div className="flex">
-        <button
-          className="flex items-stretch bg-devx-elements-artifacts-background hover:bg-devx-elements-artifacts-backgroundHover w-full overflow-hidden"
-          onClick={() => {
-            const showWorkbench = workbenchStore.showWorkbench.get();
-            workbenchStore.showWorkbench.set(!showWorkbench);
-          }}
-        >
-          <div className="px-5 p-3.5 w-full text-left">
-            <div className="w-full text-devx-elements-textPrimary font-medium leading-5 text-sm">{artifact?.title}</div>
-            <div className="w-full w-full text-devx-elements-textSecondary text-xs mt-0.5">Click to open Workbench</div>
+    <div
+      className={classNames(
+        'artifact',
+        'flex flex-col overflow-hidden rounded-lg w-full transition-border duration-150',
+      )}
+    >
+      <button
+        className={classNames(
+          'flex items-center gap-3 w-full px-3 py-2.5 text-left',
+          'bg-devx-elements-artifacts-background hover:bg-devx-elements-artifacts-backgroundHover',
+          'border border-devx-elements-artifacts-borderColor rounded-lg',
+          'transition-colors duration-150',
+        )}
+        onClick={() => {
+          const showWorkbench = workbenchStore.showWorkbench.get();
+          workbenchStore.showWorkbench.set(!showWorkbench);
+        }}
+        aria-expanded={showActions}
+        aria-controls={`artifact-actions-${messageId}`}
+      >
+        <div className="flex items-center gap-2.5 flex-1 min-w-0">
+          <div
+            className={classNames('flex-shrink-0 w-2 h-2 rounded-full', {
+              'bg-devx-accent-default animate-pulse': artifactStatus.variant === 'running',
+              'bg-devx-success-default': artifactStatus.variant === 'complete',
+              'bg-devx-danger-default': artifactStatus.variant === 'error',
+              'bg-devx-warning-default': artifactStatus.variant === 'pending',
+              'bg-devx-text-muted': artifactStatus.variant === 'idle',
+            })}
+            aria-hidden="true"
+          />
+          <div className="min-w-0 flex-1">
+            <div className="text-devx-elements-textPrimary font-medium text-sm truncate">{artifact?.title}</div>
+            <div className="flex items-center gap-2 text-xs text-devx-elements-textTertiary">
+              <span>Click to open Workbench</span>
+              <span
+                className={classNames('px-1.5 py-0.5 rounded-full text-[10px] font-medium uppercase tracking-wider', {
+                  'bg-devx-accent-subtle text-devx-accent-hover': artifactStatus.variant === 'running',
+                  'bg-devx-success-subtle text-devx-success-default': artifactStatus.variant === 'complete',
+                  'bg-devx-danger-subtle text-devx-danger-default': artifactStatus.variant === 'error',
+                  'bg-devx-warning-subtle text-devx-warning-default': artifactStatus.variant === 'pending',
+                  'bg-devx-border-subtle text-devx-text-muted': artifactStatus.variant === 'idle',
+                })}
+              >
+                {artifactStatus.label}
+              </span>
+            </div>
           </div>
-        </button>
-        <div className="bg-devx-elements-artifacts-borderColor w-[1px]" />
+        </div>
         <AnimatePresence>
           {actions.length && (
             <motion.button
-              initial={{ width: 0 }}
-              animate={{ width: 'auto' }}
-              exit={{ width: 0 }}
+              initial={{ width: 0, opacity: 0 }}
+              animate={{ width: 'auto', opacity: 1 }}
+              exit={{ width: 0, opacity: 0 }}
               transition={{ duration: 0.15, ease: cubicEasingFn }}
-              className="bg-devx-elements-artifacts-background hover:bg-devx-elements-artifacts-backgroundHover"
+              className="flex-shrink-0 bg-devx-elements-artifacts-background hover:bg-devx-elements-artifacts-backgroundHover p-2 rounded-md"
               onClick={toggleActions}
+              aria-label={showActions ? 'Hide actions' : 'Show actions'}
             >
-              <div className="p-4">
-                <div className={showActions ? 'i-ph:caret-up-bold' : 'i-ph:caret-down-bold'}></div>
-              </div>
+              <div
+                className={classNames(
+                  'i-ph:caret-down-bold text-devx-elements-textSecondary transition-transform duration-150',
+                  { 'rotate-180': showActions },
+                )}
+                aria-hidden="true"
+              />
             </motion.button>
           )}
         </AnimatePresence>
-      </div>
+      </button>
       <AnimatePresence>
         {showActions && actions.length > 0 && (
           <motion.div
-            className="actions"
-            initial={{ height: 0 }}
-            animate={{ height: 'auto' }}
-            exit={{ height: '0px' }}
-            transition={{ duration: 0.15 }}
+            id={`artifact-actions-${messageId}`}
+            className="actions border-t border-devx-elements-artifacts-borderColor"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: '0px', opacity: 0 }}
+            transition={{ duration: 0.15, ease: cubicEasingFn }}
           >
-            <div className="bg-devx-elements-artifacts-borderColor h-[1px]" />
-            <div className="p-5 text-left bg-devx-elements-actions-background">
+            <div className="p-3 bg-devx-elements-actions-background">
               <ActionList actions={actions} />
             </div>
           </motion.div>
@@ -102,14 +168,14 @@ export const Artifact = memo(({ messageId }: ArtifactProps) => {
 });
 
 interface ShellCodeBlockProps {
-  classsName?: string;
+  className?: string;
   code: string;
 }
 
-function ShellCodeBlock({ classsName, code }: ShellCodeBlockProps) {
+function ShellCodeBlock({ className, code }: ShellCodeBlockProps) {
   return (
     <div
-      className={classNames('text-xs', classsName)}
+      className={classNames('text-[12px]', className)}
       dangerouslySetInnerHTML={{
         __html: shellHighlighter.codeToHtml(code, {
           lang: 'shell',
@@ -125,14 +191,14 @@ interface ActionListProps {
 }
 
 const actionVariants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 8 },
   visible: { opacity: 1, y: 0 },
 };
 
 const ActionList = memo(({ actions }: ActionListProps) => {
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
-      <ul className="list-none space-y-2.5">
+      <ul className="list-none space-y-2">
         {actions.map((action, index) => {
           const { status, type, content } = action;
           const isLast = index === actions.length - 1;
@@ -144,39 +210,55 @@ const ActionList = memo(({ actions }: ActionListProps) => {
               initial="hidden"
               animate="visible"
               transition={{
-                duration: 0.2,
+                duration: 0.15,
                 ease: cubicEasingFn,
+                delay: index * 0.03,
               }}
             >
-              <div className="flex items-center gap-1.5 text-sm">
-                <div className={classNames('text-lg', getIconColor(action.status))}>
+              <div className="flex items-center gap-2 text-sm">
+                <div className={classNames('flex-shrink-0 text-lg', getIconColor(action.status))}>
                   {status === 'running' ? (
-                    <div className="i-svg-spinners:90-ring-with-bg"></div>
+                    <div className="i-svg-spinners:90-ring-with-bg animate-spin" aria-hidden="true" />
                   ) : status === 'pending' ? (
-                    <div className="i-ph:circle-duotone"></div>
+                    <div className="i-ph:circle-duotone" aria-hidden="true" />
                   ) : status === 'complete' ? (
-                    <div className="i-ph:check"></div>
+                    <div className="i-ph:check" aria-hidden="true" />
                   ) : status === 'failed' || status === 'aborted' ? (
-                    <div className="i-ph:x"></div>
+                    <div className="i-ph:x" aria-hidden="true" />
                   ) : null}
                 </div>
                 {type === 'file' ? (
-                  <div>
-                    Create{' '}
-                    <code className="bg-devx-elements-artifacts-inlineCode-background text-devx-elements-artifacts-inlineCode-text px-1.5 py-1 rounded-md">
-                      {action.filePath}
-                    </code>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-devx-elements-textSecondary">Create</span>
+                      <code
+                        className={classNames(
+                          'bg-devx-elements-artifacts-inlineCode-background text-devx-elements-artifacts-inlineCode-text px-2 py-1 rounded text-[12px] font-mono truncate block',
+                        )}
+                      >
+                        {action.filePath}
+                      </code>
+                    </div>
                   </div>
                 ) : type === 'shell' ? (
-                  <div className="flex items-center w-full min-h-[28px]">
-                    <span className="flex-1">Run command</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-devx-elements-textSecondary">Run</span>
+                      <code
+                        className={classNames(
+                          'bg-devx-elements-artifacts-inlineCode-background text-devx-elements-artifacts-inlineCode-text px-2 py-1 rounded text-[12px] font-mono truncate block',
+                        )}
+                      >
+                        {content.split('\n')[0].slice(0, 80)}
+                      </code>
+                    </div>
                   </div>
                 ) : null}
               </div>
               {type === 'shell' && (
                 <ShellCodeBlock
-                  classsName={classNames('mt-1', {
-                    'mb-3.5': !isLast,
+                  className={classNames('mt-2', {
+                    'mb-2': !isLast,
                   })}
                   code={content}
                 />
@@ -195,16 +277,16 @@ function getIconColor(status: ActionState['status']) {
       return 'text-devx-elements-textTertiary';
     }
     case 'running': {
-      return 'text-devx-elements-loader-progress';
+      return 'text-devx-accent-default';
     }
     case 'complete': {
-      return 'text-devx-elements-icon-success';
+      return 'text-devx-success-default';
     }
     case 'aborted': {
       return 'text-devx-elements-textSecondary';
     }
     case 'failed': {
-      return 'text-devx-elements-icon-error';
+      return 'text-devx-danger-default';
     }
     default: {
       return undefined;

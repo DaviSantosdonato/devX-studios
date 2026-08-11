@@ -1,10 +1,89 @@
-.CopyButtonContainer {
-  button:before {
-    content: 'Copied';
-    font-size: 12px;
-    position: absolute;
-    left: -53px;
-    padding: 2px 6px;
-    height: 30px;
-  }
+.CodeBlock {
+  font-family: var(--devx-font-mono);
+  font-size: 12.5px;
+  line-height: 1.55;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--devx-elements-code-background);
+  border: 1px solid var(--devx-elements-borderColor);
+  max-width: 100%;
+  box-shadow: var(--devx-shadow-sm);
+}
+
+.CodeBlockHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 2.25rem;
+  padding: 0 var(--devx-spacing-3);
+  background: var(--devx-elements-bg-depth-3);
+  border-bottom: 1px solid var(--devx-elements-borderColor);
+}
+
+.CodeBlockLanguage {
+  display: inline-flex;
+  align-items: center;
+  color: var(--devx-elements-textSecondary);
+  font-size: var(--devx-font-size-caption);
+  font-weight: var(--devx-font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.CopyButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  background: transparent;
+  border: 0;
+  border-radius: var(--devx-radius-sm);
+  color: var(--devx-elements-textTertiary);
+  transition:
+    color var(--devx-transition-fast) var(--devx-ease-standard),
+    background-color var(--devx-transition-fast) var(--devx-ease-standard);
+}
+
+.CopyButton:hover:not(:disabled) {
+  background: var(--devx-surface-hover);
+  color: var(--devx-elements-textPrimary);
+}
+
+.CopyButton:focus-visible {
+  outline: 0;
+  box-shadow: var(--devx-shadow-focus);
+}
+
+.CopyButton:disabled {
+  cursor: default;
+}
+
+.CopyButtonCopied {
+  color: var(--devx-success-default);
+}
+
+.CopyButtonCopied:hover {
+  background: var(--devx-success-subtle);
+  color: var(--devx-success-default);
+}
+
+.CodeBlockContent {
+  padding: var(--devx-spacing-3) var(--devx-spacing-4);
+  overflow-x: auto;
+  min-width: 0;
+}
+
+/* Shiki token styling adjustments */
+.CodeBlockContent :global(.shiki) {
+  padding: 0;
+}
+
+.CodeBlockContent :global(.shiki span) {
+  white-space: pre-wrap;
+}
+
+/* Line numbers (if added in future) */
+.CodeBlockContent :global(.line) {
+  display: block;
 }

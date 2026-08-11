@@ -46,36 +46,36 @@ export const CodeBlock = memo(
       };
 
       processCode();
-    }, [code]);
+    }, [code, language, theme]);
+
+    const displayLanguage = language === 'plaintext' ? undefined : language;
 
     return (
-      <div className={classNames('relative group text-left', className)}>
-        <div
-          className={classNames(
-            styles.CopyButtonContainer,
-            'bg-white absolute top-[10px] right-[10px] rounded-md z-10 text-lg flex items-center justify-center opacity-0 group-hover:opacity-100',
-            {
-              'rounded-l-0 opacity-100': copied,
-            },
+      <div className={classNames(styles.CodeBlock, className)}>
+        <div className={styles.CodeBlockHeader}>
+          {displayLanguage && (
+            <span className={styles.CodeBlockLanguage} data-language={displayLanguage}>
+              {displayLanguage}
+            </span>
           )}
-        >
           {!disableCopy && (
             <button
-              className={classNames(
-                'flex items-center bg-transparent p-[6px] justify-center before:bg-white before:rounded-l-md before:text-gray-500 before:border-r before:border-gray-300',
-                {
-                  'before:opacity-0': !copied,
-                  'before:opacity-100': copied,
-                },
-              )}
-              title="Copy Code"
-              onClick={() => copyToClipboard()}
+              className={classNames(styles.CopyButton, {
+                [styles.CopyButtonCopied]: copied,
+              })}
+              onClick={copyToClipboard}
+              aria-label={copied ? 'Copied' : 'Copy code'}
+              title={copied ? 'Copied' : 'Copy code'}
             >
-              <div className="i-ph:clipboard-text-duotone"></div>
+              {copied ? (
+                <span className="i-ph:check text-lg" aria-hidden="true" />
+              ) : (
+                <span className="i-ph:clipboard-text-duotone text-lg" aria-hidden="true" />
+              )}
             </button>
           )}
         </div>
-        <div dangerouslySetInnerHTML={{ __html: html ?? '' }}></div>
+        <div className={styles.CodeBlockContent} dangerouslySetInnerHTML={{ __html: html ?? '' }} />
       </div>
     );
   },

@@ -5,4 +5,369 @@
 
 .Chat {
   opacity: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Message list container */
+.MessageList {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--devx-spacing-3) var(--devx-spacing-4);
+  gap: var(--devx-spacing-4);
+}
+
+/* User message - compact, distinct alignment */
+.UserMessageWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--devx-spacing-1-5);
+  max-width: 85%;
+  align-self: flex-end;
+}
+
+.UserMessage {
+  display: inline-flex;
+  flex-direction: column;
+  max-width: 100%;
+  padding: var(--devx-spacing-2) var(--devx-spacing-3);
+  background: var(--devx-surface-2);
+  border: 1px solid var(--devx-border-default);
+  border-radius: var(--devx-radius-lg);
+  color: var(--devx-text-primary);
+  font-size: var(--devx-font-size-body);
+  line-height: var(--devx-line-height-body);
+}
+
+.UserMessageMeta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--devx-spacing-1-5);
+  padding-inline: var(--devx-spacing-1-5);
+  color: var(--devx-text-muted);
+  font-size: var(--devx-font-size-caption);
+  font-weight: var(--devx-font-weight-medium);
+}
+
+/* Assistant message - integrated canvas feel */
+.AssistantMessageWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--devx-spacing-1-5);
+  max-width: 100%;
+  align-self: flex-start;
+}
+
+.AssistantMessage {
+  display: flex;
+  flex-direction: column;
+  gap: var(--devx-spacing-2);
+  width: 100%;
+  min-width: 0;
+}
+
+.AssistantMessageHeader {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--devx-spacing-1-5);
+  padding-inline: var(--devx-spacing-1-5);
+  color: var(--devx-accent-hover);
+  font-size: var(--devx-font-size-caption);
+  font-weight: var(--devx-font-weight-semibold);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.AssistantMessageContent {
+  width: 100%;
+  min-width: 0;
+}
+
+/* Streaming indicator */
+.StreamingIndicator {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--devx-spacing-2);
+  padding: var(--devx-spacing-2) var(--devx-spacing-3);
+  color: var(--devx-text-muted);
+  font-size: var(--devx-font-size-caption);
+}
+
+.StreamingCursor {
+  width: 0.5rem;
+  height: 1.125rem;
+  background: var(--devx-accent-default);
+  animation: devx-streaming-blink 1s var(--devx-ease-standard) infinite;
+  border-radius: var(--devx-radius-sm);
+}
+
+@keyframes devx-streaming-blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
+/* Empty state within chat */
+.ChatEmptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-width: 0;
+  padding: var(--devx-spacing-8);
+  text-align: center;
+  color: var(--devx-text-muted);
+}
+
+.ChatEmptyStateIcon {
+  width: var(--devx-icon-size-xl);
+  height: var(--devx-icon-size-xl);
+  color: var(--devx-text-muted);
+  margin-bottom: var(--devx-spacing-3);
+}
+
+.ChatEmptyStateText {
+  font-size: var(--devx-font-size-body-small);
+  font-weight: var(--devx-font-weight-medium);
+  color: var(--devx-text-secondary);
+}
+
+/* Composer internal - anchored at bottom */
+.Composer {
+  position: sticky;
+  bottom: 0;
+  flex-shrink: 0;
+  min-width: 0;
+  background: var(--devx-prompt-background);
+  border-top: 1px solid var(--devx-border-default);
+  backdrop-filter: blur(8px);
+}
+
+.ComposerInner {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: var(--chat-max-width);
+  margin: 0 auto;
+  padding: var(--devx-spacing-3) var(--devx-spacing-4);
+  gap: var(--devx-spacing-3);
+}
+
+.ComposerTextarea {
+  width: 100%;
+  min-height: 4.75rem;
+  max-height: 25rem;
+  padding: var(--devx-spacing-3) var(--devx-spacing-4);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  color: var(--devx-text-primary);
+  font-family: var(--devx-font-sans);
+  font-size: var(--devx-font-size-body);
+  line-height: var(--devx-line-height-body);
+  outline: 0;
+  resize: none;
+  overflow-y: auto;
+}
+
+.ComposerTextarea::placeholder {
+  color: var(--devx-input-placeholder);
+}
+
+.ComposerFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--devx-spacing-2);
+  flex-wrap: wrap;
+}
+
+.ComposerActions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--devx-spacing-1-5);
+}
+
+.EnhanceButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--devx-spacing-1-5);
+  min-height: var(--devx-control-height-sm);
+  padding: 0 var(--devx-spacing-2);
+  background: transparent;
+  border: 0;
+  border-radius: var(--devx-radius-md);
+  color: var(--devx-text-secondary);
+  font-size: var(--devx-font-size-caption);
+  font-weight: var(--devx-font-weight-medium);
+  transition:
+    color var(--devx-transition-fast) var(--devx-ease-standard),
+    background-color var(--devx-transition-fast) var(--devx-ease-standard);
+}
+
+.EnhanceButton:hover:not(:disabled) {
+  background: var(--devx-surface-hover);
+  color: var(--devx-text-primary);
+}
+
+.EnhanceButton:focus-visible {
+  outline: 0;
+  box-shadow: var(--devx-shadow-focus);
+}
+
+.EnhanceButton:disabled {
+  color: var(--devx-text-disabled);
+  cursor: not-allowed;
+}
+
+.EnhanceButtonActive {
+  background: var(--devx-accent-subtle);
+  color: var(--devx-accent-hover);
+}
+
+.EnhanceButtonActive:hover:not(:disabled) {
+  background: var(--devx-accent-selected);
+  color: var(--devx-accent-hover);
+}
+
+.ComposerHint {
+  color: var(--devx-text-muted);
+  font-size: var(--devx-font-size-caption);
+}
+
+.ComposerHint kbd {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--devx-spacing-0-5) var(--devx-spacing-1);
+  background: var(--devx-surface-3);
+  border: 1px solid var(--devx-border-subtle);
+  border-radius: var(--devx-radius-sm);
+  color: var(--devx-text-secondary);
+  font-family: var(--devx-font-mono);
+  font-size: inherit;
+  box-shadow: inset 0 -1px 0 var(--devx-border-default);
+}
+
+.SendButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--devx-control-height-md);
+  height: var(--devx-control-height-md);
+  padding: 0 var(--devx-spacing-3);
+  background: var(--devx-button-primary-background);
+  border: 0;
+  border-radius: var(--devx-radius-md);
+  color: var(--devx-button-primary-text);
+  font-size: var(--devx-font-size-caption);
+  font-weight: var(--devx-font-weight-semibold);
+  transition:
+    background-color var(--devx-transition-fast) var(--devx-ease-standard),
+    box-shadow var(--devx-transition-fast) var(--devx-ease-standard),
+    transform var(--devx-transition-fast) var(--devx-ease-standard);
+}
+
+.SendButton:hover:not(:disabled) {
+  background: var(--devx-button-primary-backgroundHover);
+  transform: translateY(-1px);
+}
+
+.SendButton:active:not(:disabled) {
+  background: var(--devx-button-primary-backgroundActive);
+  transform: translateY(0);
+}
+
+.SendButton:focus-visible {
+  outline: 0;
+  box-shadow: var(--devx-shadow-focus);
+}
+
+.SendButton:disabled {
+  background: var(--devx-button-disabled-background);
+  color: var(--devx-button-disabled-text);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.SendButtonStop {
+  background: var(--devx-button-danger-background);
+  color: var(--devx-button-danger-text);
+}
+
+.SendButtonStop:hover:not(:disabled) {
+  background: var(--devx-button-danger-backgroundHover);
+}
+
+.SendButtonStop:active:not(:disabled) {
+  background: var(--devx-button-danger-backgroundActive);
+}
+
+/* Scrollbar for chat area */
+.MessageList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.MessageList::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.MessageList::-webkit-scrollbar-thumb {
+  background: var(--devx-border-hover);
+  border-radius: var(--devx-radius-full);
+}
+
+.MessageList::-webkit-scrollbar-thumb:hover {
+  background: var(--devx-border-active);
+}
+
+/* Responsive */
+@media (max-width: 639px) {
+  .MessageList {
+    padding: var(--devx-spacing-2) var(--devx-spacing-3);
+    gap: var(--devx-spacing-3);
+  }
+
+  .UserMessageWrapper {
+    max-width: 90%;
+  }
+
+  .UserMessage {
+    padding: var(--devx-spacing-2) var(--devx-spacing-2-5);
+    font-size: var(--devx-font-size-body-small);
+  }
+
+  .ComposerInner {
+    padding: var(--devx-spacing-2) var(--devx-spacing-3);
+  }
+
+  .ComposerTextarea {
+    min-height: 5.5rem;
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+
+  .ComposerFooter {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ComposerActions {
+    justify-content: space-between;
+  }
+
+  .ComposerHint {
+    order: -1;
+    text-align: center;
+  }
 }
