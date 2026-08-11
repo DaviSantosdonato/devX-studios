@@ -91,7 +91,7 @@ export const Preview = memo(() => {
           disabled={!activePreview}
           onClick={reloadPreview}
         />
-        <label className={styles.previewAddress}>
+        <label className={classNames(styles.previewAddress, 'flex-1')}>
           <span className={classNames('i-ph:lock-key-duotone', styles.previewAddressIcon)} aria-hidden="true" />
           <span className="sr-only">Preview address</span>
           <input
@@ -125,9 +125,10 @@ export const Preview = memo(() => {
         {activePreview ? (
           <iframe
             ref={iframeRef}
-            className="h-full w-full border-none bg-white"
+            className="h-full w-full border-none"
             src={iframeUrl}
             title="DevX application preview"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads"
           />
         ) : (
           <div className={styles.emptyState}>

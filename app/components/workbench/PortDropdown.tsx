@@ -54,11 +54,11 @@ export const PortDropdown = memo(
         {isDropdownOpen ? (
           <div
             id="devx-preview-port-menu"
-            className="devx-popover dropdown-animation absolute right-0 mt-2 min-w-[160px] overflow-hidden"
+            className="devx-popover dropdown-animation absolute right-0 mt-1.5 min-w-[160px] overflow-hidden rounded-lg border border-devx-elements-borderColor bg-devx-elements-artifacts-background shadow-md"
             role="menu"
             aria-label="Preview ports"
           >
-            <div className="border-b border-devx-elements-borderColor px-3 py-2 text-xs font-medium text-devx-elements-textSecondary">
+            <div className="border-b border-devx-elements-borderColor px-3 py-1.5 text-xs font-medium text-devx-elements-textSecondary">
               Preview ports
             </div>
             <div className="p-1">
@@ -69,7 +69,7 @@ export const PortDropdown = memo(
                   <button
                     key={preview.port}
                     className={classNames(
-                      'flex min-h-8 w-full items-center gap-2 rounded-md px-2 text-left text-xs hover:bg-devx-elements-item-backgroundActive',
+                      'flex min-h-7 w-full items-center gap-2 rounded-md px-2 text-left text-xs hover:bg-devx-elements-item-backgroundActive transition-colors',
                       {
                         'bg-devx-elements-item-backgroundAccent text-devx-elements-item-contentAccent': isActive,
                         'text-devx-elements-item-contentDefault': !isActive,

@@ -8,7 +8,7 @@ import { cubicEasingFn } from '~/utils/easings';
 import { renderLogger } from '~/utils/logger';
 import FileTree from './FileTree';
 
-const WORK_DIR_REGEX = new RegExp(`^${WORK_DIR.split('/').slice(0, -1).join('/').replaceAll('/', '\\/')}/`);
+const WORK_DIR_REGEX = new RegExp(`^${WORK_DIR.split('/').slice(0, -1).join('/').replaceAll('/', '\\\\/')}/`);
 
 interface FileBreadcrumbProps {
   files?: FileMap;
@@ -70,7 +70,7 @@ export const FileBreadcrumb = memo<FileBreadcrumbProps>(({ files, pathSegments =
   }
 
   return (
-    <div className="flex">
+    <div className="flex items-center gap-1 min-w-0 overflow-hidden" role="navigation" aria-label="File path">
       {pathSegments.map((segment, index) => {
         const isLast = index === pathSegments.length - 1;
 
@@ -83,23 +83,36 @@ export const FileBreadcrumb = memo<FileBreadcrumbProps>(({ files, pathSegments =
         const isActive = activeIndex === index;
 
         return (
-          <div key={index} className="relative flex items-center">
+          <div key={index} className="relative flex items-center flex-shrink-0">
             <DropdownMenu.Root open={isActive} modal={false}>
               <DropdownMenu.Trigger asChild>
                 <span
                   ref={(ref) => (segmentRefs.current[index] = ref)}
-                  className={classNames('flex items-center gap-1.5 cursor-pointer shrink-0', {
-                    'text-devx-elements-textTertiary hover:text-devx-elements-textPrimary': !isActive,
-                    'text-devx-elements-textPrimary underline': isActive,
-                    'pr-4': isLast,
-                  })}
+                  className={classNames(
+                    'flex items-center gap-1 cursor-pointer shrink-0 text-xs font-mono transition-colors duration-100 px-1.5 py-0.5 rounded',
+                    {
+                      'text-devx-elements-textTertiary hover:text-devx-elements-textPrimary hover:bg-devx-elements-item-backgroundActive':
+                        !isActive,
+                      'text-devx-elements-textPrimary bg-devx-elements-item-backgroundAccent': isActive,
+                    },
+                  )}
                   onClick={() => handleSegmentClick(index)}
+                  aria-label={isLast ? `Current file: ${segment}` : `Folder: ${segment}`}
                 >
-                  {isLast && <div className="i-ph:file-duotone" />}
+                  {isLast ? (
+                    <span className="i-ph:file-duotone devx-icon--xs" aria-hidden="true" />
+                  ) : (
+                    <span className="i-ph:folder-duotone devx-icon--xs" aria-hidden="true" />
+                  )}
                   {segment}
                 </span>
               </DropdownMenu.Trigger>
-              {index > 0 && !isLast && <span className="i-ph:caret-right inline-block mx-1" />}
+              {!isLast && (
+                <span
+                  className="i-ph:caret-right inline-block text-devx-elements-textTertiary mx-0.5"
+                  aria-hidden="true"
+                />
+              )}
               <AnimatePresence>
                 {isActive && (
                   <DropdownMenu.Portal>
@@ -117,8 +130,8 @@ export const FileBreadcrumb = memo<FileBreadcrumbProps>(({ files, pathSegments =
                         exit="close"
                         variants={contextMenuVariants}
                       >
-                        <div className="rounded-lg overflow-hidden">
-                          <div className="devx-popover max-h-[50vh] min-w-[300px] overflow-auto">
+                        <div className="rounded-lg overflow-hidden border border-devx-elements-borderColor bg-devx-elements-artifacts-background">
+                          <div className="devx-popover max-h-[50vh] min-w-[280px] overflow-auto p-1">
                             <FileTree
                               files={files}
                               hideRoot

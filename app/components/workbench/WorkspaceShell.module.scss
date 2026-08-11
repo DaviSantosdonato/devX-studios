@@ -192,6 +192,7 @@
 
 .filePanel {
   background: var(--devx-surface-2);
+  overflow: hidden;
 }
 
 .editorPanel,
@@ -281,10 +282,10 @@
 
 .previewToolbar {
   display: flex;
+  align-items: center;
   min-height: 2.25rem;
   flex: 0 0 2.25rem;
-  align-items: center;
-  gap: var(--devx-spacing-1);
+  gap: var(--devx-spacing-1-5);
   padding: 0 var(--devx-spacing-2);
   background: var(--devx-surface-2);
   border-bottom: 1px solid var(--devx-border-subtle);
@@ -487,6 +488,73 @@
   background: var(--devx-surface-scrim);
 }
 
+.devx-tabs {
+  display: flex;
+  align-items: stretch;
+  gap: var(--devx-spacing-0-5);
+  overflow-x: auto;
+}
+
+.devx-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--devx-spacing-1-5);
+  min-height: var(--devx-control-height-sm);
+  padding: 0 var(--devx-spacing-2);
+  background: transparent;
+  border: 0;
+  border-radius: var(--devx-radius-sm);
+  color: var(--devx-text-muted);
+  font-size: var(--devx-font-size-caption);
+  font-weight: var(--devx-font-weight-medium);
+  white-space: nowrap;
+  transition:
+    color var(--devx-transition-fast) var(--devx-ease-standard),
+    background-color var(--devx-transition-fast) var(--devx-ease-standard);
+}
+
+.devx-tab:hover:not(:disabled) {
+  background: var(--devx-surface-hover);
+  color: var(--devx-text-primary);
+}
+
+.devx-tab:focus-visible {
+  outline: 0;
+  box-shadow: var(--devx-shadow-focus);
+}
+
+.devx-tab[data-active='true'] {
+  background: var(--devx-accent-selected);
+  color: var(--devx-accent-hover);
+}
+
+.devx-tab:disabled {
+  color: var(--devx-text-disabled);
+}
+
+.panelRegion {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  background: var(--devx-surface-1);
+}
+
+.panelRegion > .panelHeader:first-child {
+  flex-shrink: 0;
+}
+
+.panelRegion > .fileTreeScroll,
+.panelRegion > .editorContent,
+.panelRegion > .terminalContent,
+.panelRegion > .previewContent {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
 @media (max-width: 899px) {
   .outerResizeHandle {
     display: none;
@@ -498,52 +566,5 @@
 
   .chatPanel {
     width: 100% !important;
-    flex: 1 1 100% !important;
-  }
-
-  .workbenchPanel {
-    position: absolute !important;
-    z-index: 3;
-    inset: 0;
-    width: 100% !important;
-  }
-
-  .projectPrefix,
-  .workbenchContext,
-  .workbenchStatus {
-    display: none;
-  }
-
-  .workspaceWordmark {
-    display: none;
-  }
-}
-
-@media (max-width: 639px) {
-  .workspaceHeader {
-    gap: var(--devx-spacing-1);
-    padding-inline: var(--devx-spacing-2);
-  }
-
-  .headerDivider {
-    display: none;
-  }
-
-  .projectIdentity {
-    max-width: 8rem;
-  }
-
-  .viewSwitchButton span:last-child {
-    display: none;
-  }
-
-  .viewSwitchButton {
-    width: var(--devx-control-height-sm);
-    padding: 0;
-  }
-
-  .panelMeta,
-  .liveStatus span {
-    display: none;
   }
 }

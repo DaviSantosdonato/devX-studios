@@ -6,7 +6,7 @@ import { createScopedLogger, renderLogger } from '~/utils/logger';
 const logger = createScopedLogger('FileTree');
 
 const NODE_PADDING_LEFT = 8;
-const DEFAULT_HIDDEN_FILES = [/\/node_modules\//, /\/\.next/, /\/\.astro/];
+const DEFAULT_HIDDEN_FILES = [/\/node_modules\//, /\.next/, /\.astro/];
 
 interface Props {
   files?: FileMap;
@@ -110,8 +110,21 @@ export const FileTree = memo(
       });
     };
 
+    if (filteredFileList.length === 0) {
+      return (
+        <div
+          className={classNames(
+            'flex h-full w-full items-center justify-center text-devx-elements-textTertiary',
+            className,
+          )}
+        >
+          <span className="text-xs">No files yet</span>
+        </div>
+      );
+    }
+
     return (
-      <div className={classNames('text-sm', className)}>
+      <div className={classNames('text-[12px] leading-[1.3]', className)} role="tree" aria-label="File explorer">
         {filteredFileList.map((fileOrFolder) => {
           switch (fileOrFolder.kind) {
             case 'file': {
@@ -168,12 +181,13 @@ function Folder({ folder: { depth, name }, collapsed, selected = false, onClick 
         'bg-devx-elements-item-backgroundAccent text-devx-elements-item-contentAccent': selected,
       })}
       depth={depth}
-      iconClasses={classNames({
-        'i-ph:caret-right scale-98': collapsed,
-        'i-ph:caret-down scale-98': !collapsed,
+      iconClasses={classNames('i-ph:caret-right scale-98 transition-transform duration-150', {
+        'rotate-90': !collapsed,
       })}
       onClick={onClick}
+      aria-expanded={!collapsed}
     >
+      <span className="i-ph:folder-duotone scale-98 shrink-0" aria-hidden="true" />
       {name}
     </NodeButton>
   );
@@ -194,19 +208,15 @@ function File({ file: { depth, name }, onClick, selected, unsavedChanges = false
         'bg-devx-elements-item-backgroundAccent text-devx-elements-item-contentAccent': selected,
       })}
       depth={depth}
-      iconClasses={classNames('i-ph:file-duotone scale-98', {
+      iconClasses={classNames('i-ph:file-duotone scale-98 shrink-0', {
         'group-hover:text-devx-elements-item-contentActive': !selected,
       })}
       onClick={onClick}
     >
-      <div
-        className={classNames('flex items-center', {
-          'group-hover:text-devx-elements-item-contentActive': !selected,
-        })}
-      >
-        <div className="flex-1 truncate pr-2">{name}</div>
-        {unsavedChanges && <span className="i-ph:circle-fill scale-68 shrink-0 text-orange-500" />}
-      </div>
+      <div className="flex-1 truncate pr-2">{name}</div>
+      {unsavedChanges && (
+        <span className="i-ph:circle-fill scale-68 shrink-0 text-devx-warning-default" aria-label="Unsaved changes" />
+      )}
     </NodeButton>
   );
 }
@@ -217,19 +227,21 @@ interface ButtonProps {
   children: ReactNode;
   className?: string;
   onClick?: () => void;
+  'aria-expanded'?: boolean;
 }
 
-function NodeButton({ depth, iconClasses, onClick, className, children }: ButtonProps) {
+function NodeButton({ depth, iconClasses, onClick, className, children, 'aria-expanded': ariaExpanded }: ButtonProps) {
   return (
     <button
       className={classNames(
-        'flex items-center gap-1.5 w-full pr-2 border-2 border-transparent text-faded py-0.5',
+        'flex items-center gap-1.5 w-full pr-2 border-2 border-transparent text-faded py-1',
         className,
       )}
       style={{ paddingLeft: `${6 + depth * NODE_PADDING_LEFT}px` }}
       onClick={() => onClick?.()}
+      aria-expanded={ariaExpanded}
     >
-      <div className={classNames('scale-120 shrink-0', iconClasses)}></div>
+      <div className={classNames('shrink-0', iconClasses)}></div>
       <div className="truncate w-full text-left">{children}</div>
     </button>
   );

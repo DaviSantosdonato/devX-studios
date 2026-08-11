@@ -390,6 +390,12 @@
   color: var(--devx-text-primary);
 }
 
+.devx-icon--xs {
+  width: var(--devx-icon-size-xs, 0.75rem);
+  height: var(--devx-icon-size-xs, 0.75rem);
+  font-size: var(--devx-icon-size-xs, 0.75rem);
+}
+
 .devx-icon--sm {
   width: var(--devx-icon-size-sm);
   height: var(--devx-icon-size-sm);

@@ -5,6 +5,7 @@ import { forwardRef, memo, useEffect, useImperativeHandle, useRef } from 'react'
 import type { Theme } from '~/lib/stores/theme';
 import { createScopedLogger } from '~/utils/logger';
 import { getTerminalTheme } from './theme';
+import { classNames } from '~/utils/classNames';
 
 const logger = createScopedLogger('Terminal');
 
@@ -37,7 +38,12 @@ export const Terminal = memo(
         disableStdin: readonly,
         theme: getTerminalTheme(readonly ? { cursor: '#00000000' } : {}),
         fontSize: 12,
-        fontFamily: 'Menlo, courier-new, courier, monospace',
+        fontFamily: 'var(--devx-font-mono)',
+        lineHeight: 1.3,
+        letterSpacing: 0,
+        fontWeight: '400',
+        fontWeightBold: '500',
+        allowProposedApi: true,
       });
 
       terminalRef.current = terminal;
@@ -81,6 +87,6 @@ export const Terminal = memo(
       };
     }, []);
 
-    return <div className={className} ref={terminalElementRef} />;
+    return <div className={classNames('h-full w-full', className)} ref={terminalElementRef} />;
   }),
 );
