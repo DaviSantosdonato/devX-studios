@@ -1,6 +1,7 @@
 import type React from 'react';
 import { ClientOnly } from 'remix-utils/client-only';
 import { IconButton } from '~/components/ui/IconButton';
+import { ModelSelector } from '~/components/ui/ModelSelector';
 import { classNames } from '~/utils/classNames';
 import { HomeRecentProjects } from './HomeRecentProjects.client';
 
@@ -76,6 +77,7 @@ export function HomeStart({
               <span className={styles.ReadyDot} aria-hidden="true" />
               Ready
             </span>
+            <ModelSelector showProvider={true} ariaLabel="Select AI model" disabled={isStreaming} />
           </div>
 
           <textarea

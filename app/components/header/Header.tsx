@@ -1,17 +1,20 @@
 import { useStore } from '@nanostores/react';
+import { useState } from 'react';
 import { ClientOnly } from 'remix-utils/client-only';
 import { ThemeSwitch } from '~/components/ui/ThemeSwitch';
 import { ChatDescription } from '~/lib/persistence/ChatDescription.client';
 import { chatStore } from '~/lib/stores/chat';
 import { classNames } from '~/utils/classNames';
 import { HeaderActionButtons } from './HeaderActionButtons.client';
+import { SettingsDialog } from '~/components/ui/SettingsDialog';
 import styles from '~/components/workbench/WorkspaceShell.module.scss';
 
 export function Header() {
   const chat = useStore(chatStore);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   if (!chat.started) {
-    return <HomeHeader />;
+    return <HomeHeader settingsOpen={settingsOpen} setSettingsOpen={setSettingsOpen} />;
   }
 
   return (
@@ -50,11 +53,18 @@ export function Header() {
           </nav>
         )}
       </ClientOnly>
+      <SettingsDialog open={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </header>
   );
 }
 
-function HomeHeader() {
+function HomeHeader({
+  settingsOpen,
+  setSettingsOpen,
+}: {
+  settingsOpen: boolean;
+  setSettingsOpen: (open: boolean) => void;
+}) {
   return (
     <header className="flex items-center shrink-0 h-[var(--header-height)] px-4 sm:px-5 bg-devx-elements-background-depth-1 border-b border-devx-elements-borderColor">
       <a
@@ -85,7 +95,15 @@ function HomeHeader() {
         <ClientOnly fallback={<span className="block h-7 w-7" aria-hidden="true" />}>
           {() => <ThemeSwitch />}
         </ClientOnly>
+        <button
+          className="devx-button devx-button--ghost devx-button--sm"
+          aria-label="Open settings"
+          onClick={() => setSettingsOpen(true)}
+        >
+          <span className="i-ph:gear-six devx-icon--sm" aria-hidden="true" />
+        </button>
       </nav>
+      <SettingsDialog open={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </header>
   );
 }

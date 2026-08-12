@@ -6,6 +6,7 @@ import { ClientOnly } from 'remix-utils/client-only';
 import { HomeStart } from '~/components/home/HomeStart';
 import { Menu } from '~/components/sidebar/Menu.client';
 import { IconButton } from '~/components/ui/IconButton';
+import { ModelSelector } from '~/components/ui/ModelSelector';
 import { PanelHeader } from '~/components/ui/PanelHeader';
 import { Workbench } from '~/components/workbench/Workbench.client';
 import workspaceStyles from '~/components/workbench/WorkspaceShell.module.scss';
@@ -32,6 +33,9 @@ interface BaseChatProps {
   handleInputChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   enhancePrompt?: () => void;
   onPromptSelect?: (prompt: string) => void;
+
+  /** Called when the selected model changes */
+  onModelChange?: (modelId: string) => void;
 }
 
 const TEXTAREA_MIN_HEIGHT = 76;
@@ -54,6 +58,7 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
       enhancePrompt,
       handleStop,
       onPromptSelect,
+      onModelChange,
     },
     ref,
   ) => {
@@ -211,6 +216,12 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                       <span className={workspaceStyles.liveStatus} data-busy={isStreaming}>
                         <span>{isStreaming ? 'Working' : 'Ready'}</span>
                       </span>
+                      <ModelSelector
+                        showProvider={true}
+                        ariaLabel="Select AI model"
+                        disabled={isStreaming}
+                        onChange={onModelChange}
+                      />
                     </PanelHeader>
                     <div ref={scrollRef} className={classNames(workspaceStyles.chatScroll, styles.MessageList)}>
                       <div className={classNames(styles.Chat, workspaceStyles.chatContent, 'flex flex-col min-h-full')}>
